@@ -78,7 +78,7 @@ class ElasticsearchHelper
 
             foreach ($searchTerms as $term) {
                 $wildcard = array(
-                    'bibo:periodical.http://purl.org/dc/elements/1.1/title' => "*" . strtolower($term) . "*"
+                    'bibo:periodical.http://purl.org/dc/elements/1.1/title' => strtolower($term) . "*"
                 );
 
                 array_push($query['body']['query']['bool']['must'], array(

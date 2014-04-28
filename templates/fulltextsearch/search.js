@@ -35,11 +35,11 @@ var substringMatcher = function(strs) {
  * Twitter Typehead tokenizer initialization.
  */
 var titles = new Bloodhound({
-    // datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
     datumTokenizer: function(d) {
         return Bloodhound.tokenizers.whitespace(d.value);
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
+    limit: 7 ,
     remote: {
         url: '/OntoWiki/fulltextsearch/fulltextsearch?query=%QUERY',
         ajax: {
@@ -68,7 +68,7 @@ $(document).ready(function() {
                 '<strong>No results found</strong><p>Unable to find any results that match the current query</p?>',
                 '</div>'
             ].join('\n'),
-            suggestion: Handlebars.compile('<p><strong>{{title}}</strong><br><span class="uri-suggestion">{{uri}}</span></p>')
+            suggestion: Handlebars.compile('<p><strong>{{title}}</strong><br><span class="hint--right" data-hint="{{highlightKey}}"><span class="uri-suggestion">{{{highlight}}}</span></span></p>')
         }
     })
         .on('typeahead:selected typeahead:autocompleted', function(e, datum) {

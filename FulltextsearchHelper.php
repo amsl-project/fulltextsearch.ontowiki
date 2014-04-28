@@ -26,7 +26,7 @@ class FulltextsearchHelper extends OntoWiki_Component_Helper
     public $view = null;
     
     public function init() {
-        
+            
         // init view
         if (null === $this->view) {
             $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
@@ -40,7 +40,9 @@ class FulltextsearchHelper extends OntoWiki_Component_Helper
         $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/typeahead.bundle.js');
         $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/handlebars.js');
         $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/search.js');
+        $this->view->headLink()->appendStylesheet($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/hint.min.css');
         $this->view->headLink()->appendStylesheet($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/fulltextsearch.css');
+
     }
 }
 

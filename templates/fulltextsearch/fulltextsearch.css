@@ -110,7 +110,9 @@ p + p {
     font-weight: bold;
 }
 .tt-dropdown-menu {
-    width: 422px;
+    /*width: 622px;*/
+
+width: 100%;
     margin-top: 12px;
     padding: 8px 0;
     background-color: #fff;
@@ -129,7 +131,17 @@ p + p {
     font-size: 18px;
     line-height: 24px;
 }
+.tt-suggestion em {
+    color: #000;
+    text-decoration: underline;
+    font-style: normal;
+}
 .tt-suggestion.tt-cursor {
+    color: #fff;
+    background-color: #676767;
+    cursor: pointer;
+}
+.tt-suggestion.tt-cursor em {
     color: #fff;
     background-color: #676767;
     cursor: pointer;
@@ -163,5 +175,5 @@ p + p {
 
 .uri-suggestion {
     font-weight: 200;
-    font-size: 15px;
+    font-size: 13px;
 }

@@ -75,10 +75,11 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         
-        $fullResults = $esHelper->searchAndReturnEverything($input);
-        $this->view->jsonResult = $fullResults;
-
-        $this->view->resultArray = ElasticsearchUtils::extractResults($fullResults);
-
+        $result = $esHelper->searchAndReturnEverything($input);
+        $this->view->jsonResult = $result['resultSet'];
+        
+        $this->view->resultArray = ElasticsearchUtils::extractResults($result['resultSet']);
+        $this->view->query = $result['query'];
+        
     }
 }

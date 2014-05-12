@@ -112,9 +112,15 @@ $(document).ready(function() {
  */
 $(document).ready(function() {
     $("#show-json-result").click(function() {
-        $("#json-result").toggle("slow", function() {
-            $("#json-result").is(":visible") ? $('#show-json-result').text('[-] Show results as JSON') : $(
+        $("#json-result").slideToggle("slow", function() {
+            $("#json-result").is(":visible") ? $('#show-json-result').text('[\u2212] Hide results') : $(
                 '#show-json-result').text('[+] Show results as JSON');
+        });
+    });
+    $("#show-query").click(function() {
+        $("#query").slideToggle("slow", function() {
+            $("#query").is(":visible") ? $('#show-query').text('[\u2212] Hide query') : $(
+                '#show-query').text('[+] Show query');
         });
     });
 });

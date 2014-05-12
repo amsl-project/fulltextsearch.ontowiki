@@ -30,6 +30,7 @@
             "http://rdvocab.info/otherTitleInformation";
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
+    :size "20";
 ] ;
   doap:release :v1-0 .
 :v1-0 a doap:Version ;

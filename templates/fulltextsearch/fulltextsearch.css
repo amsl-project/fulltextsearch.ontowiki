@@ -1,82 +1,9 @@
-
-
-/*html {
-    overflow-y: scroll;
-    *overflow-x: hidden;
-}
-.container {
-    max-width: 750px;
-    margin: 0 auto;
-    text-align: center;
-}*/
+/*Twitter Typeahead styles*/
 
 .tt-dropdown-menu, .gist {
-
-
     text-align: left;
-
 }
-
-/* base styles */
-
-/* ----------- */
-
-/*html {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 18px;
-    line-height: 1.2;
-    color: #333;
-}
-a {
-    color: #03739c;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-}
-.table-of-contents li {
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
-}
-.table-of-contents li a {
-    font-size: 16px;
-    color: #999;
-}
-.title, .example-name {
-    font-family: Prociono;
-}
-p + p {
-    margin: 30px 0 0 0;
-}*/
-
-/* site theme */
-
-/* ---------- */
-
-/*.twitter-typeahead {
-    height: 36px;
-}*/
-
-/*.title {
-    margin: 20px 0 0 0;
-    font-size: 64px;
-}
-.example {
-    padding: 30px 0;
-}
-.example-name {
-    margin: 20px 0;
-    font-size: 32px;
-}
-.demo {
-    position: relative;
-    *z-index: 1;
-    margin: 50px 0;
-}*/
-
 .twitter-typeahead {
-
     width: 90%;
 }
 .twitter-typeahead pre {
@@ -162,54 +89,18 @@ p + p {
 .gist {
     font-size: 14px;
 }
-.slidehelper .content {
-    /*margin-top: 7px!important;*/
-}
-/* example specific styles */
-
-/* ----------------------- */
-
-/*#custom-templates .empty-message {
-    padding: 5px 10px;
-    text-align: center;
-}
-#multiple-datasets .league-name {
-    margin: 0 20px 5px 20px;
-    padding: 3px 0;
-    border-bottom: 1px solid #ccc;
-}
-#scrollable-dropdown-menu .tt-dropdown-menu {
-    max-height: 150px;
-    overflow-y: auto;
-}
-#rtl-support .tt-dropdown-menu {
-    text-align: right;
-}*/
-
 .uri-suggestion {
     font-weight: 200;
     font-size: 13px;
 }
 
-.show-all-results {
-    font-weight: light;
-    font-style:italic;
-    font-size: 16px;
-    /*color: #676767;*/
+/* Fulltext search result page design tweaks */
+
+#show-json-result, #show-query {
+    cursor: pointer;
+    display: table;
 }
 
-.show-all-results.tt-cursor {
-    color: #fff;
-    background-color: #676767;
-    cursor: pointer;
-}
-
-.show-all-results.tt-cursor em {
-    color: #fff;
-    background-color: #676767;
-    cursor: pointer;
-}
-
-#show-json-result {
-    cursor: pointer;
+.hint--bottom em {
+    text-decoration: underline;
 }

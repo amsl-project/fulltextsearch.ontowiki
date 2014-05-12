@@ -1,7 +1,7 @@
 <?php
 function prettyPrint($a) {
       echo "<pre>";
-      $pretty = json_encode($a, JSON_PRETTY_PRINT);
+      $pretty = json_encode($a, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
       print_r($pretty);
     echo "</pre>";
 }
@@ -16,7 +16,7 @@ function prettyPrint($a) {
             <!-- <th><?php echo $this->_('select'); ?>          </th> -->
             <th>ID</th>
             <th>Label</th>
-            <th>Highlight</th>
+            <th>Highlight (what part has matched)</th>
         </tr>
     </thead>
     <tbody>
@@ -35,8 +35,13 @@ function prettyPrint($a) {
         <?php endforeach; ?>
     </tbody>
 </table>
-<?php } ?>
-<span id="show-json-result">[+] Show results as JSON<div id="show-json-result"></div></span>
+<?php } else { echo "<p>No results found</p><br /><br />";};?>
+<div id="show-json-result">[+] Show results as JSON<div id="show-json-result"></div></div>
 <div id="json-result" style="display: none">
     <?php echo prettyPrint($this->jsonResult) ?>
+</div>
+
+<div id="show-query">[+] Show query<div id="show-query"></div></div>
+<div id="query" style="display: none">
+    <?php echo prettyPrint($this->query) ?>
 </div>

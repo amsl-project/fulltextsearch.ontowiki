@@ -39,7 +39,7 @@ var titles = new Bloodhound({
         return Bloodhound.tokenizers.whitespace(d.value);
     },
     queryTokenizer: Bloodhound.tokenizers.whitespace,
-    limit: 7 ,
+    limit: 7,
     remote: {
         url: '/OntoWiki/fulltextsearch/fulltextsearch?query=%QUERY',
         ajax: {
@@ -57,7 +57,23 @@ titles.initialize();
  */
 $(document).ready(function() {
     $('#searchtext-input').off().unbind().addClass('typeahead');
-    // $('twitter-typeahead')
+
+    // dynamically set input value to value of search text. 
+    // This is needed to search for input if enter was pressed.
+    $("#searchtext-input").on("input", function() {
+        input = $('#searchtext-input').val();
+        $("#actual-input").text(input);
+    });
+
+
+    // every result gets a paragraph containing the title and a visualization of the
+    // the part elasticsearch has matched (highlight)
+    var source = '<p>';
+    source += '<strong class="highlight-title">{{title}}</strong><br>';
+    source += '<span class="hint--bottom" data-hint="{{highlightKey}}">';
+    source += '<span class="uri-suggestion">{{{highlight}}}</span></span>';
+    source += '</p>';
+
     $('#searchtext-input.typeahead').typeahead(null, {
         name: 'best-matches',
         displayKey: 'title',
@@ -65,17 +81,40 @@ $(document).ready(function() {
         templates: {
             empty: [
                 '<div class="empty-message">',
-                '<strong>No results found</strong><p>Unable to find any results that match the current query</p?>',
+                '<strong>No results found</strong><p>Press <em>enter</em> to trigger an advanced search.</p?>',
                 '</div>'
             ].join('\n'),
-            suggestion: Handlebars.compile('<p><strong>{{title}}</strong><br><span class="hint--right" data-hint="{{highlightKey}}"><span class="uri-suggestion">{{{highlight}}}</span></span></p>')
+            suggestion: Handlebars.compile(source)
         }
     })
-        .on('typeahead:selected typeahead:autocompleted', function(e, datum) {
-            console.log(datum);
+        .on('typeahead:selected typeahead:autocompleted', function(event, datum) {
+            // if a autocomplete-generated result is selected the user will be directed there directly
             window.location = urlBase + 'resource/properties?r=' + encodeURIComponent(datum['uri']);
+        })
+        .on('change', function(event, datum) {
+            // if no autocomplete-generated result is selected the advanced search is triggered after
+            // the enter button has been pressed
+            $('#searchtext-input').keyup(function(event) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode == '13') {
+                    window.location = urlBase + 'fulltextsearch/search?input=' + input;
+                };
+            });
         });
 
     // hide inner labels on click
     $('input.inner-label').innerLabel().blur();
+
+});
+
+/**
+ * Show the result as json.
+ */
+$(document).ready(function() {
+    $("#show-json-result").click(function() {
+        $("#json-result").toggle("slow", function() {
+            $("#json-result").is(":visible") ? $('#show-json-result').text('[-] Show results as JSON') : $(
+                '#show-json-result').text('[+] Show results as JSON');
+        });
+    });
 });

@@ -1,0 +1,42 @@
+<?php
+function prettyPrint($a) {
+      echo "<pre>";
+      $pretty = json_encode($a, JSON_PRETTY_PRINT);
+      print_r($pretty);
+    echo "</pre>";
+}
+?>
+<h1>Fulltext search results for: <?php echo $this->input ?></h1>
+<?php $odd = false; ?>
+<?php if (!empty($this->resultArray)) { ?>
+<table class="separated-vertical" id="history-list">
+    <thead>
+        <!-- history table headers -->
+        <tr class="odd">
+            <!-- <th><?php echo $this->_('select'); ?>          </th> -->
+            <th>ID</th>
+            <th>Label</th>
+            <th>Highlight</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- history table contents -->
+        <?php $i = 0; ?>
+        <?php foreach ($this->resultArray as $result) :?>
+        <tr class="<?php echo $odd ? 'odd' : 'even'; $odd = !$odd; ?> ">
+            <td><a href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>resource/properties?r=<?php echo $result['id']; ?>"><?php echo $result['id']; ?></a></td>
+            <td><?php echo $result['title']; ?></td>
+            <td>
+                <span class="hint--bottom" data-hint="<?php echo array_keys($result['highlight'])[0] ?>">
+                <?php echo array_values(array_values($result['highlight'])[0])[0]; ?>
+                </span>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php } ?>
+<span id="show-json-result">[+] Show results as JSON<div id="show-json-result"></div></span>
+<div id="json-result" style="display: none">
+    <?php echo prettyPrint($this->jsonResult) ?>
+</div>

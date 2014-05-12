@@ -8,6 +8,7 @@
  */
 
 require_once realpath(dirname(__FILE__)) . '/classes/ElasticsearchHelper.php';
+require_once realpath(dirname(__FILE__)) . '/classes/ElasticsearchUtils.php';
 
 /**
  * Fulltextsearch component controller.
@@ -40,6 +41,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         // check if search already contains an error
         if (!$error) {
             $esHelper = new ElasticsearchHelper($this->_privateConfig);
+            
             // $esHelper = new ElasticsearchHelperOld();
             $result = $esHelper->search($searchText);
         }
@@ -60,5 +62,23 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         }
         
         $this->_response->setBody(json_encode($result));
+    }
+    
+    public function searchAction() {
+        
+        $store = $this->_erfurt->getStore();
+        $this->_erfurt->authenticate();
+        
+        $params = $this->_request->getParams();
+        $input = $params['input'];
+        $this->view->input = $input;
+        
+        $esHelper = new ElasticsearchHelper($this->_privateConfig);
+        
+        $fullResults = $esHelper->searchAndReturnEverything($input);
+        $this->view->jsonResult = $fullResults;
+
+        $this->view->resultArray = ElasticsearchUtils::extractResults($fullResults);
+
     }
 }

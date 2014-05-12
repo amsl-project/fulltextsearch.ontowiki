@@ -28,7 +28,7 @@
     :fields "http://purl.org/dc/elements/1.1/title", 
             "http://purl.org/dc/elements/1.1/publisher", 
             "http://rdvocab.info/otherTitleInformation";
-    :defaultOperator "OR";
+    :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
 ] ;
   doap:release :v1-0 .

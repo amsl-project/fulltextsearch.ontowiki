@@ -26,7 +26,8 @@ class ElasticsearchHelper
     /**
      * [ElasticsearchHelper description]
      */
-    public function ElasticsearchHelper($privateConfig) {
+    public function ElasticsearchHelper($privateConfig) 
+    {
         static ::$_privateConfig = $privateConfig;
     }
     
@@ -36,8 +37,10 @@ class ElasticsearchHelper
      * @param  [type] $config [description]
      * @return [type]         [description]
      */
-    public static function getClient($config) {
-        if (!isset(static ::$client)) {
+    public static function getClient($config) 
+    {
+        if (!isset(static ::$client)) 
+        {
             static ::init($config);
         }
         return static ::$client;
@@ -47,7 +50,8 @@ class ElasticsearchHelper
      * [init description]
      * @return [type] [description]
      */
-    private static function init($config) {
+    private static function init($config) 
+    {
         
         /**
          * ElasticSearch Configuration
@@ -63,7 +67,8 @@ class ElasticsearchHelper
      * @param  [type] $searchTerm [description]
      * @return [type]             [description]
      */
-    public function search($searchTerm) {
+    public function search($searchTerm) 
+    {
         
         $logger = OntoWiki::getInstance()->logger;
         
@@ -73,21 +78,20 @@ class ElasticsearchHelper
         $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
         
         $query['index'] = $index;
-        if (isset($searchTerm)) {
+        if (isset($searchTerm)) 
+        {
             $searchTerms = explode(" ", $searchTerm);
             
             $partialQuery = '';
-            foreach ($searchTerms as $term) {
+            foreach ($searchTerms as $term) 
+            {
                 $partialQuery.= $term . "* ";
             }
             $query['body']['query']['query_string']['query'] = $partialQuery;
             $query['body']['query']['query_string']['fields'] = $fields;
             $query['body']['query']['query_string']['default_operator'] = $defaultOperator;
             
-            $query['body']['highlight'] = array('fields' => array(
-                'http://purl.org/dc/elements/1.1/title' => array('fragment_size' => 500, 'number_of_fragments' => 1), 
-                'http://purl.org/dc/elements/1.1/publisher' => array('fragment_size' => 500, 'number_of_fragments' => 1), 
-                'http://rdvocab.info/otherTitleInformation' => array('fragment_size' => 500, 'number_of_fragments' => 1)));
+            $query['body']['highlight'] = array('fields' => array('http://purl.org/dc/elements/1.1/title' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://purl.org/dc/elements/1.1/publisher' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://rdvocab.info/otherTitleInformation' => array('fragment_size' => 500, 'number_of_fragments' => 1)));
             
             // $grumpf = '';
             // foreach ($fields as $field) {
@@ -100,18 +104,69 @@ class ElasticsearchHelper
             
             $results = array();
             
-            // $logger->info('fullresult:' . print_r(($fullResults), true));
-            foreach ($fullResults['hits']['hits'] as $hit) {
-                if (isset($hit['highlight'])) {
+            $logger->info('fullresult:' . print_r(($fullResults), true));
+            foreach ($fullResults['hits']['hits'] as $hit) 
+            {
+                if (isset($hit['highlight'])) 
+                {
                     $highlightValue = array_values($hit['highlight']) [0];
                     $highlightKey = array_keys($hit['highlight']) [0];
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $hit['_source'][$dropdownField], 'highlight' => $highlightValue, 'highlightKey' => $highlightKey);
-                } else {
+                } else
+                {
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $hit['_source'][$dropdownField], 'highlight' => '');
                 }
             }
         }
+        
+        // if results have been found, a last result will be appended which provides a link to a result page displaying more than 7 results.
+        // if (count($results) >= 1)
+        // {
+        // $results[] = array('uri' => 'show-all-results', 'title' => '... search for ', 'highlight' => 'only 7 results are currently displayed', 'show-all-results' => 'true');
+        
+        // }
         return $results;
+    }
+
+    /**
+     * [search description]
+     * @param  [type] $searchTerm [description]
+     * @return [type]             [description]
+     */
+    public function searchAndReturnEverything($searchTerm) 
+    {
+        
+        $logger = OntoWiki::getInstance()->logger;
+        
+        $index = static ::$_privateConfig->fulltextsearch->index;
+        $defaultOperator = static ::$_privateConfig->fulltextsearch->defaultOperator;
+        $fields = static ::$_privateConfig->fulltextsearch->fields->toArray();
+        $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
+        
+        $query['index'] = $index;
+        if (isset($searchTerm)) 
+        {
+            $searchTerms = explode(" ", $searchTerm);
+            
+            $partialQuery = '';
+            foreach ($searchTerms as $term) 
+            {
+                $partialQuery.= $term . "* ";
+            }
+            $query['body']['query']['query_string']['query'] = $partialQuery;
+            $query['body']['query']['query_string']['fields'] = $fields;
+            $query['body']['query']['query_string']['default_operator'] = $defaultOperator;
+            
+            $query['body']['highlight'] = array('fields' => array('http://purl.org/dc/elements/1.1/title' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://purl.org/dc/elements/1.1/publisher' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://rdvocab.info/otherTitleInformation' => array('fragment_size' => 500, 'number_of_fragments' => 1)));
+            
+            
+            $logger->info('fullResults elasticsearch query:' . print_r(($query), true));
+            $fullResults = $this->getClient(static ::$_privateConfig)->search($query);
+            $logger->info('fullResults:' . print_r(($fullResults), true));
+            return $fullResults;
+            
+        }        
+        return null;
     }
     
     /**
@@ -119,6 +174,7 @@ class ElasticsearchHelper
      *
      * Since this a singleton, cloning is not allowed.
      */
-    protected function __clone() {
+    protected function __clone() 
+    {
     }
 }

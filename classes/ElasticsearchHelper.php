@@ -83,7 +83,12 @@ class ElasticsearchHelper
             $query['body']['query']['query_string']['fields'] = $fields;
             $query['body']['query']['query_string']['default_operator'] = $defaultOperator;
             
-            $query['body']['highlight'] = array('fields' => array('http://purl.org/dc/elements/1.1/title' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://purl.org/dc/elements/1.1/publisher' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://rdvocab.info/otherTitleInformation' => array('fragment_size' => 500, 'number_of_fragments' => 1)));
+            $highlightFields = array();
+            foreach ($fields as $field) {
+                $tmp = array($field => array('fragment_size' => 500, 'number_of_fragments' => 1));
+                array_push($highlightFields, $tmp);
+            }
+            $query['body']['highlight'] = array('fields' => $highlightFields);
             
             $logger->info('elasticsearch query:' . print_r(($query), true));
             $fullResults = $this->getClient(static ::$_privateConfig)->search($query);
@@ -134,7 +139,12 @@ class ElasticsearchHelper
             $query['body']['query']['query_string']['fields'] = $fields;
             $query['body']['query']['query_string']['default_operator'] = $defaultOperator;
             
-            $query['body']['highlight'] = array('fields' => array('http://purl.org/dc/elements/1.1/title' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://purl.org/dc/elements/1.1/publisher' => array('fragment_size' => 500, 'number_of_fragments' => 1), 'http://rdvocab.info/otherTitleInformation' => array('fragment_size' => 500, 'number_of_fragments' => 1)));
+            $highlightFields = array();
+            foreach ($fields as $field) {
+                $tmp = array($field => array('fragment_size' => 500, 'number_of_fragments' => 1));
+                array_push($highlightFields, $tmp);
+            }
+            $query['body']['highlight'] = array('fields' => $highlightFields);
             
             $resultSet = $this->getClient(static ::$_privateConfig)->search($query);
             

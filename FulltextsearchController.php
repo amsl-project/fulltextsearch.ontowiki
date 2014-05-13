@@ -66,6 +66,8 @@ class FulltextsearchController extends OntoWiki_Controller_Component
     
     public function searchAction() {
         
+        $this->view->placeholder('main.window.title')->set('Fulltext Search');
+        $this->addModuleContext('main.window.fulltextsearch.search');
         $store = $this->_erfurt->getStore();
         $this->_erfurt->authenticate();
         
@@ -81,5 +83,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $this->view->resultArray = ElasticsearchUtils::extractResults($result['resultSet']);
         $this->view->query = $result['query'];
         
+        OntoWiki::getInstance()->getNavigation()->disableNavigation();
     }
 }

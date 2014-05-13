@@ -37,11 +37,11 @@ class FulltextsearchHelper extends OntoWiki_Component_Helper
             $this->view->clearVars();
         }
         
-        $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/typeahead.bundle.js');
-        $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/handlebars.js');
-        $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/search.js');
-        $this->view->headLink()->appendStylesheet($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/hint.min.css');
-        $this->view->headLink()->appendStylesheet($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/fulltextsearch.css');
+        $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/js/typeahead.bundle.js');
+        $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/js/handlebars.js');
+        $this->view->headScript()->appendFile($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/js/search.js');
+        $this->view->headLink()->appendStylesheet($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/css/hint.min.css');
+        $this->view->headLink()->appendStylesheet($this->_config->urlBase . 'extensions/fulltextsearch/templates/fulltextsearch/css/fulltextsearch.css');
 
     }
 }

@@ -86,7 +86,7 @@ $(document).ready(function() {
         $('#searchtext-input').keyup(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
-                window.location = urlBase + 'fulltextsearch/search?input=' + input + '&indices=' + indices;
+                window.location = urlBase + 'fulltextsearch/search?input=' + input;
             };
         });
     });
@@ -128,3 +128,24 @@ $(document).ready(function() {
         $("#filter-apply-btn").attr("href", _href + '&indices=' + selected);
     });
 });
+// if the indics parameter is missing or empty all indices have been searched. 
+// to prevent confusion about the not-checked checkboxes, they need to be checked. 
+$(document).ready(function() {
+    if (getUrlParameter('indices') === undefined) {
+        $("#filter-list input").each(function() {
+            $(this).attr("checked", true);
+        });
+    }
+});
+// since jQuery does not come with a function to get URL parameters we
+// have to do that by ourselves
+function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) {
+            return sParameterName[1];
+        }
+    }
+}

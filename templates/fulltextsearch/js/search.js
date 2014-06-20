@@ -4,7 +4,6 @@
  * @copyright Copyright (c) 2013, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
-
 /**
  * This function evaluates the regex for the typeahead plugin.
  * @param  {[String]} strs The pool of strings
@@ -30,7 +29,6 @@ var substringMatcher = function(strs) {
         cb(matches);
     };
 };
-
 /**
  * Twitter Typehead tokenizer initialization.
  */
@@ -48,7 +46,6 @@ var titles = new Bloodhound({
     }
 });
 titles.initialize();
-
 /**
  * Now the existing search field will be reused for the new search function.
  * To make sure the old search function is not interfering with the new one,
@@ -57,15 +54,12 @@ titles.initialize();
  */
 $(document).ready(function() {
     $('#searchtext-input').off().unbind().addClass('typeahead');
-
     // dynamically set input value to value of search text. 
     // This is needed to search for input if enter was pressed.
     $("#searchtext-input").on("input", function() {
         input = $('#searchtext-input').val();
         $("#actual-input").text(input);
     });
-
-
     // every result gets a paragraph containing the title and a visualization of the
     // the part elasticsearch has matched (highlight)
     var source = '<p>';
@@ -73,54 +67,64 @@ $(document).ready(function() {
     source += '<span class="hint--bottom" data-hint="{{highlightKey}}">';
     source += '<span class="uri-suggestion">{{{highlight}}}</span></span>';
     source += '</p>';
-
+    // indices
+    var indices = 'bibo:periodical,bibrm:contractitem';
     $('#searchtext-input.typeahead').typeahead(null, {
         name: 'best-matches',
         displayKey: 'title',
         source: titles.ttAdapter(),
         templates: {
-            empty: [
-                '<div class="empty-message">',
-                '<strong>No results found</strong><p>Press <em>enter</em> to trigger an advanced search.</p?>',
-                '</div>'
-            ].join('\n'),
+            empty: ['<div class="empty-message">', '<strong>No results found</strong><p>Press <em>enter</em> to trigger an advanced search.</p?>', '</div>'].join('\n'),
             suggestion: Handlebars.compile(source)
         }
-    })
-        .on('typeahead:selected typeahead:autocompleted', function(event, datum) {
-            // if a autocomplete-generated result is selected the user will be directed there directly
-            window.location = urlBase + 'resource/properties?r=' + encodeURIComponent(datum['uri']);
-        })
-        .on('change', function(event, datum) {
-            // if no autocomplete-generated result is selected the advanced search is triggered after
-            // the enter button has been pressed
-            $('#searchtext-input').keyup(function(event) {
-                var keycode = (event.keyCode ? event.keyCode : event.which);
-                if (keycode == '13') {
-                    window.location = urlBase + 'fulltextsearch/search?input=' + input;
-                };
-            });
+    }).on('typeahead:selected typeahead:autocompleted', function(event, datum) {
+        // if a autocomplete-generated result is selected the user will be directed there directly
+        window.location = urlBase + 'resource/properties?r=' + encodeURIComponent(datum['uri']);
+    }).on('change', function(event, datum) {
+        // if no autocomplete-generated result is selected the advanced search is triggered after
+        // the enter button has been pressed
+        $('#searchtext-input').keyup(function(event) {
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if (keycode == '13') {
+                window.location = urlBase + 'fulltextsearch/search?input=' + input + '&indices=' + indices;
+            };
         });
-
+    });
     // hide inner labels on click
     $('input.inner-label').innerLabel().blur();
-
 });
-
 /**
  * Show the result as json.
  */
 $(document).ready(function() {
     $("#show-json-result").click(function() {
         $("#json-result").slideToggle("slow", function() {
-            $("#json-result").is(":visible") ? $('#show-json-result').text('[\u2212] Hide results') : $(
-                '#show-json-result').text('[+] Show results as JSON');
+            $("#json-result").is(":visible") ? $('#show-json-result').text('[\u2212] Hide results') : $('#show-json-result').text('[+] Show results as JSON');
         });
     });
     $("#show-query").click(function() {
         $("#query").slideToggle("slow", function() {
-            $("#query").is(":visible") ? $('#show-query').text('[\u2212] Hide query') : $(
-                '#show-query').text('[+] Show query');
+            $("#query").is(":visible") ? $('#show-query').text('[\u2212] Hide query') : $('#show-query').text('[+] Show query');
         });
+    });
+    $("#show-filter").click(function() {
+        $("#filter-list").slideToggle("slow", function() {
+            $("#filter-list").is(":visible") ? $('#show-filter-btn').text('Hide filter') : $('#show-filter-btn').text('Show filter');
+        });
+    });
+    // cycle through the filter checkboxes and build the filter URI
+    $("#filter-apply-btn").click(function() {
+        var chkArray = [];
+        // look for all checkboxes check if it was checked
+        $("#filter-list input:checked").each(function() {
+            chkArray.push($(this).val());
+        });
+        // we join the array separated by the comma and remove the last comma
+        var selected;
+        selected = chkArray.join(',') + ",";
+        selected = selected.substr(0, selected.length - 1);
+        // append parameters to href of button link
+        var _href = $("#filter-apply-btn").attr("href");
+        $("#filter-apply-btn").attr("href", _href + '&indices=' + selected);
     });
 });

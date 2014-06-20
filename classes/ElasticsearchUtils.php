@@ -18,6 +18,7 @@ class ElasticsearchUtils
             $extract['id'] = $hit['_source']['@id'];
             $extract['title'] = $hit['_source']['http://purl.org/dc/elements/1.1/title'];
             $extract['highlight'] = $hit['highlight'];
+            $extract['index'] = $hit['_index'];
             array_push($extractedResults, $extract);
         }
 

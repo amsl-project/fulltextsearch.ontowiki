@@ -93,14 +93,22 @@
     font-weight: 200;
     font-size: 13px;
 }
-
 /* Fulltext search result page design tweaks */
 
 #show-json-result, #show-query {
     cursor: pointer;
     display: table;
 }
-
 .hint--bottom em {
     text-decoration: underline;
+}
+#filter-list {
+    margin: 1em;
+}
+#filter-list input {
+    margin-bottom: 0.5em;
+    top: -3px;
+}
+#filter-list a {
+    margin-top: 0.5em;
 }

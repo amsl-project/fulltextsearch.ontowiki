@@ -73,12 +73,22 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         
         $params = $this->_request->getParams();
         $input = $params['input'];
+        
+        $indices = '';
+        if (isset($params['indices'])) {
+            $indices = $params['indices'];
+        }
         $this->view->input = $input;
         
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         
-        $result = $esHelper->searchAndReturnEverything($input);
+        $result = $esHelper->searchAndReturnEverything($input, $indices);
         $this->view->jsonResult = $result['resultSet'];
+
+        $this->view->availableIndices = $esHelper->getAvailableIndices(); 
+
+        // transform comma separated indices to array
+        $this->view->selectedIndices = str_getcsv($indices); 
         
         $this->view->resultArray = ElasticsearchUtils::extractResults($result['resultSet']);
         $this->view->query = $result['query'];

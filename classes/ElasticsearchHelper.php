@@ -55,6 +55,21 @@ class ElasticsearchHelper
         static ::$client = new Elasticsearch\Client($params);
     }
     
+
+    /**
+     * Returns all available Indices except for the settings index.
+     */
+    public function getAvailableIndices() {
+        $logger = OntoWiki::getInstance()->logger;
+        $query = '_aliases';
+        $indices = array_keys($this->getClient(static ::$_privateConfig)->indices()->getAliases());
+
+        // remove settings index.
+        $indices = array_diff($indices, array("settings"));
+        $logger->info('ulafst:' . print_r(($indices), true));
+        return $indices;
+    }
+    
     /**
      * The search function triggered by the autocomplete function.
      * It only returns specific fields and not the whole result set.
@@ -113,19 +128,22 @@ class ElasticsearchHelper
     /**
      * Returns the full result set to a given search term.
      * @param  String $searchTerm The search term.
+     * @param  String $indices The indices to be searched.
      * @return array $fullResults The array containing the complete result set.
      */
-    public function searchAndReturnEverything($searchTerm) {
+    public function searchAndReturnEverything($searchTerm, $indices) {
         
         $logger = OntoWiki::getInstance()->logger;
         
-        $index = static ::$_privateConfig->fulltextsearch->index;
         $defaultOperator = static ::$_privateConfig->fulltextsearch->defaultOperator;
         $fields = static ::$_privateConfig->fulltextsearch->fields->toArray();
         $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
         $size = static ::$_privateConfig->fulltextsearch->size;
         
-        $query['index'] = $index;
+        // if no index was specified ignore the parameter "index" to search all indices
+        if ($indices !== '') {
+            $query['index'] = $indices;
+        }
         if (isset($searchTerm)) {
             $searchTerms = explode(" ", $searchTerm);
             

@@ -86,6 +86,8 @@ class ElasticsearchHelper
         $fields = static ::$_privateConfig->fulltextsearch->fields->toArray();
         $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
         
+        $logger->info('fulltextsearch: searching for ' . $searchTerm);
+        
         $query['index'] = $index;
         if (isset($searchTerm)) {
             $searchTerms = explode(" ", $searchTerm);

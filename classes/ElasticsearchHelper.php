@@ -116,7 +116,8 @@ class ElasticsearchHelper
             foreach ($fullResults['hits']['hits'] as $hit) {
                 if (isset($hit['highlight'])) {
                     $highlight = $hit['highlight'];
-                    $highlightValue = array_values($highlight)[0];
+                    $highlightValues[] = array_values($highlight); 
+                    $highlightValue = $highlightValues[0];
                     $highlightKey = array_keys($highlight)[0];
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $hit['_source'][$dropdownField], 'highlight' => $highlightValue, 'highlightKey' => $highlightKey);
                 } else {

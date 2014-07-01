@@ -65,7 +65,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
     }
     
     public function searchAction() {
-        
+        OntoWiki::getInstance()->logger->info('searchAction');
         $this->view->placeholder('main.window.title')->set('Fulltext Search');
         $this->addModuleContext('main.window.fulltextsearch.search');
         $store = $this->_erfurt->getStore();

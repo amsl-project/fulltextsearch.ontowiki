@@ -15,8 +15,10 @@
   owconfig:templates "templates" ;
   owconfig:languages "languages/" ;
   rdfs:label "Fulltextsearch" ;
-  doap:description "An extension that provides elasticsearch-based fulltextsearch for OntoWiki" ;
+  doap:description "An extension that provides elasticsearch-based fulltext-search for OntoWiki" ;
   owconfig:authorLabel "AKSW" ;
+  owconfig:pluginEvent event:onIndexAction ;
+  owconfig:pluginEvent event:onReindexAction ;
   doap:maintainer <http://aksw.org> ;
   owconfig:config [
     a owconfig:Config;
@@ -31,6 +33,7 @@
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "20";
+    :indexService "127.0.0.1"
 ] ;
   doap:release :v1-0 .
 :v1-0 a doap:Version ;

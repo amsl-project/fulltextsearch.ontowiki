@@ -113,8 +113,8 @@ class ElasticsearchHelper
             $logger->info('fullresult:' . print_r(($fullResults), true));
             foreach ($fullResults['hits']['hits'] as $hit) {
                 if (isset($hit['highlight'])) {
-                    $highlightValue = array_values($hit['highlight']) [0];
-                    $highlightKey = array_keys($hit['highlight']) [0];
+                    $highlightValue = array_values($hit['highlight'])[0];
+                    $highlightKey = array_keys($hit['highlight'])[0];
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $hit['_source'][$dropdownField], 'highlight' => $highlightValue, 'highlightKey' => $highlightKey);
                 } else {
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $hit['_source'][$dropdownField], 'highlight' => '');

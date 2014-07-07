@@ -55,7 +55,6 @@ class ElasticsearchHelper
         static ::$client = new Elasticsearch\Client($params);
     }
     
-
     /**
      * Returns all available Indices except for the settings index.
      */
@@ -63,7 +62,7 @@ class ElasticsearchHelper
         $logger = OntoWiki::getInstance()->logger;
         $query = '_aliases';
         $indices = array_keys($this->getClient(static ::$_privateConfig)->indices()->getAliases());
-
+        
         // remove settings index.
         $indices = array_diff($indices, array("settings"));
         $logger->info('ulafst:' . print_r(($indices), true));
@@ -88,7 +87,7 @@ class ElasticsearchHelper
         
         $logger->info('fulltextsearch: searching for ' . $searchTerm);
         
-        $query['index'] = $index;
+        // $query['index'] = $index;
         if (isset($searchTerm)) {
             $searchTerms = explode(" ", $searchTerm);
             
@@ -116,13 +115,22 @@ class ElasticsearchHelper
             foreach ($fullResults['hits']['hits'] as $hit) {
                 if (isset($hit['highlight'])) {
                     $highlight = $hit['highlight'];
-                    $highlightValues[] = array_values($highlight); 
-                    $highlightKeys[] = array_keys($highlight); 
+                    $highlightValues[] = array_values($highlight);
+                    $highlightKeys[] = array_keys($highlight);
                     $highlightValue = $highlightValues[0];
                     $highlightKey = $highlightKeys[0];
-                    $results[] = array('uri' => $hit['_source']['@id'], 'title' => $hit['_source'][$dropdownField], 'highlight' => $highlightValue, 'highlightKey' => $highlightKey);
+                    
+                    // show title or label
+                    $title = $hit['_source']['@id'];
+                    if (isset($hit['_source']['http://purl.org/dc/elements/1.1/title'])) {
+                        $title = $hit['_source']['http://purl.org/dc/elements/1.1/title'];
+                    } elseif (isset($hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'])) {
+                        $title = $hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'];
+                    }
+
+                    $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => $highlightValue, 'highlightKey' => $highlightKey);
                 } else {
-                    $results[] = array('uri' => $hit['_source']['@id'], 'title' => $hit['_source'][$dropdownField], 'highlight' => '');
+                    $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => '');
                 }
             }
         }

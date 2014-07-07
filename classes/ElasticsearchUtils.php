@@ -16,7 +16,14 @@ class ElasticsearchUtils
         foreach ($fullResults['hits']['hits'] as $hit) {
             $extract = array();
             $extract['id'] = $hit['_source']['@id'];
-            $extract['title'] = $hit['_source']['http://purl.org/dc/elements/1.1/title'];
+            if (isset($hit['_source']['http://purl.org/dc/elements/1.1/title'])) {
+                $extract['title'] = $hit['_source']['http://purl.org/dc/elements/1.1/title'];
+            } elseif (isset($hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'])) {
+                $extract['title'] = $hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'];
+            } else {
+                $extract['title'] = $hit['_source']['@id'];
+            }
+
             $extract['highlight'] = $hit['highlight'];
             $extract['index'] = $hit['_index'];
             array_push($extractedResults, $extract);

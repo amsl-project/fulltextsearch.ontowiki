@@ -6,8 +6,8 @@ function prettyPrint($a) {
     echo "</pre>";
 }
 ?>
-<h1>Fulltext search results for: <?php echo $this->input ?></h1>
-<div id="show-filter"><a id="show-filter-btn" class="minibutton">Show filter</a></div>
+<h1><?php echo $this->_('Fulltext search results for') ?>: <?php echo $this->input ?></h1>
+<div id="show-filter"><a id="show-filter-btn" class="minibutton"><?php echo $this->_('Show filter') ?></a></div>
 <!-- The list of filters -->
 <div id="filter-list" style="display: none">
     <?php foreach ($this->availableIndices as $index) :?>
@@ -25,7 +25,7 @@ function prettyPrint($a) {
     </div>
     <?php endif; ?>
     <?php endforeach; ?>
-    <a id="filter-apply-btn" class="minibutton" href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>fulltextsearch/search?input=<?php echo $this->input ?>">Apply filter</a>
+    <a id="filter-apply-btn" class="minibutton" href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>fulltextsearch/search?input=<?php echo $this->input ?>"><?php echo $this->_('Apply filter') ?></a>
 </div>
 <br />
 <?php $odd = false; ?>
@@ -35,10 +35,10 @@ function prettyPrint($a) {
         <!-- table headers -->
         <tr class="odd">
             <!-- <th><?php echo $this->_('select'); ?>          </th> -->
-            <th>ID</th>
-            <th>Label</th>
-            <th>Highlight (what part has matched)</th>
-            <th>Index</th>
+            <th><?php echo $this->_('Resource') ?></th>
+            <th><?php echo $this->_('Label') ?></th>
+            <th><?php echo $this->_('Highlight') ?></th>
+            <th><?php echo $this->_('Class') ?></th>
         </tr>
     </thead>
     <tbody>
@@ -59,12 +59,22 @@ function prettyPrint($a) {
     </tbody>
 </table>
 <?php } else { echo "<p>No results found</p><br /><br />";};?>
-<div id="show-json-result">[+] Show results as JSON</div>
+<div id="show-json-result">[+] <?php echo $this->_('Show results as JSON') ?></div>
 <div id="json-result" style="display: none">
     <?php echo prettyPrint($this->jsonResult) ?>
 </div>
-<div id="show-query">[+] Show query</div>
+<div id="show-query">[+] <?php echo $this->_('Show query') ?></div>
 <div id="query" style="display: none">
     <?php echo prettyPrint($this->query) ?>
 </div>
 <?php  // echo prettyPrint($this->availableIndices) ?>
+<script type="text/javascript">
+    var showAsJson = '<?php echo $this->_("Show results as JSON") ?>';
+    var hideResults = '<?php echo $this->_("Hide results") ?>';
+    var showQuery = '<?php echo $this->_("Show query") ?>';
+    var hideQuery = '<?php echo $this->_("Hide query") ?>';
+    var showFilter = '<?php echo $this->_("Show filter") ?>';
+    var hideFilter = '<?php echo $this->_("Hide filter") ?>';
+    var noResults = '<?php echo $this->_("No results found") ?>';
+    var trigger = '<?php echo $this->_("Press enter to trigger an advanced search") ?>';
+</script>

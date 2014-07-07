@@ -67,6 +67,8 @@ $(document).ready(function() {
     source += '<span class="hint--bottom" data-hint="{{highlightKey}}">';
     source += '<span class="uri-suggestion">{{{highlight}}}</span></span>';
     source += '</p>';
+    var noResults = 'No results found';
+    var trigger = 'Press enter to trigger an advanced search';
     // indices
     var indices = 'bibo:periodical,bibrm:contractitem';
     $('#searchtext-input.typeahead').typeahead(null, {
@@ -74,7 +76,7 @@ $(document).ready(function() {
         displayKey: 'title',
         source: titles.ttAdapter(),
         templates: {
-            empty: ['<div class="empty-message">', '<strong>No results found</strong><p>Press <em>enter</em> to trigger an advanced search.</p?>', '</div>'].join('\n'),
+            empty: ['<div class="empty-message">', '<strong>' + noResults + '</strong><p>' + trigger + '</p?>', '</div>'].join('\n'),
             suggestion: Handlebars.compile(source)
         }
     }).on('typeahead:selected typeahead:autocompleted', function(event, datum) {
@@ -99,17 +101,17 @@ $(document).ready(function() {
 $(document).ready(function() {
     $("#show-json-result").click(function() {
         $("#json-result").slideToggle("slow", function() {
-            $("#json-result").is(":visible") ? $('#show-json-result').text('[\u2212] Hide results') : $('#show-json-result').text('[+] Show results as JSON');
+            $("#json-result").is(":visible") ? $('#show-json-result').text('[\u2212] ' + hideResults) : $('#show-json-result').text('[+] ' + showAsJson);
         });
     });
     $("#show-query").click(function() {
         $("#query").slideToggle("slow", function() {
-            $("#query").is(":visible") ? $('#show-query').text('[\u2212] Hide query') : $('#show-query').text('[+] Show query');
+            $("#query").is(":visible") ? $('#show-query').text('[\u2212] ' + hideQuery) : $('#show-query').text('[+] ' + showQuery);
         });
     });
     $("#show-filter").click(function() {
         $("#filter-list").slideToggle("slow", function() {
-            $("#filter-list").is(":visible") ? $('#show-filter-btn').text('Hide filter') : $('#show-filter-btn').text('Show filter');
+            $("#filter-list").is(":visible") ? $('#show-filter-btn').text(hideFilter) : $('#show-filter-btn').text(showFilter);
         });
     });
     // cycle through the filter checkboxes and build the filter URI

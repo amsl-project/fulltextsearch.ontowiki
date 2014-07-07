@@ -30,6 +30,8 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         
         $store = $this->_erfurt->getStore();
         $this->_erfurt->authenticate();
+
+        $translate = $this->_owApp->translate;
         
         if ($this->_request->query !== null) {
             $searchText = htmlspecialchars(trim($this->_request->query));
@@ -66,7 +68,9 @@ class FulltextsearchController extends OntoWiki_Controller_Component
     
     public function searchAction() {
         OntoWiki::getInstance()->logger->info('searchAction');
-        $this->view->placeholder('main.window.title')->set('Fulltext Search');
+        $translate = $this->_owApp->translate;
+
+        $this->view->placeholder('main.window.title')->set($translate->_('Fulltext Search'));
         $this->addModuleContext('main.window.fulltextsearch.search');
         $store = $this->_erfurt->getStore();
         $this->_erfurt->authenticate();

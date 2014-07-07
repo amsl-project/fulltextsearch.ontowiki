@@ -13,7 +13,7 @@
   owconfig:privateNamespace <https://github.com/AKSW/history/raw/master/doap.n3#> ;
   owconfig:enabled "true"^^xsd:boolean ;
   owconfig:templates "templates" ;
-  owconfig:languages "languages/" ;
+  owconfig:languages "languages" ;
   rdfs:label "Fulltextsearch" ;
   doap:description "An extension that provides elasticsearch-based fulltext-search for OntoWiki" ;
   owconfig:authorLabel "AKSW" ;
@@ -23,13 +23,15 @@
   owconfig:config [
     a owconfig:Config;
     owconfig:id "fulltextsearch";
-    :hosts "172.18.113.206:9200";
+    :hosts "172.18.113.206:9201";
     :username "my_username";
     :password "my_password";
     :index "bibo:periodical";
     :fields "http://purl.org/dc/elements/1.1/title", 
             "http://purl.org/dc/elements/1.1/publisher", 
-            "http://rdvocab.info/otherTitleInformation";
+            "http://rdvocab.info/otherTitleInformation",
+            "http://www.w3.org/2006/vcard/ns#given-name",
+            "http://www.w3.org/2006/vcard/ns#family-name";
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "20";

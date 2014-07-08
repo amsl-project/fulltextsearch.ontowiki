@@ -13,7 +13,9 @@ class FulltextsearchPlugin extends OntoWiki_Plugin {
             $resource = $event->resource;
             $model = $event->model;
             $indexHelper = new IndexHelper($this->_privateConfig);
-            OntoWiki::getInstance()->logger->info('[DOGE9]' . 'config: ' . print_r($this->_privateConfig->indexService, true));
+            // OntoWiki::getInstance()->logger->info('[DOGE13] ' . 'config: ' . print_r($this->_privateConfig->fulltextsearch->indexService, true));
+            $indexHelper->triggerReindex($event->resource);
+            $indexHelper->finish();
         }
         public function onReindexAction($event) {
             $resource = $event->resource;

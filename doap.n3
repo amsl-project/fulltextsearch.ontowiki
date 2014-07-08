@@ -23,7 +23,7 @@
   owconfig:config [
     a owconfig:Config;
     owconfig:id "fulltextsearch";
-    :hosts "172.18.113.206:9201";
+    :hosts "172.18.113.206:9200";
     :username "my_username";
     :password "my_password";
     :index "bibo:periodical";
@@ -35,7 +35,7 @@
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "20";
-    :indexService "127.0.0.1"
+    :indexService "172.18.113.206:8080";
 ] ;
   doap:release :v1-0 .
 :v1-0 a doap:Version ;

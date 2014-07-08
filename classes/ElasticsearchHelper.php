@@ -63,8 +63,17 @@ class ElasticsearchHelper
         $query = '_aliases';
         $indices = array_keys($this->getClient(static ::$_privateConfig)->indices()->getAliases());
         
+        // filter all indices that start with a . (e.g. .settings)
+        $pattern = '/^.*/';
+        foreach ($indices as $key => $index) {
+            $res = preg_match($pattern, $index);
+            if ($res) {
+                unset($key);
+            }
+        }
+        
         // remove settings index.
-        $indices = array_diff($indices, array("settings"));
+        $indices = array_diff($indices, array(".settings"));
         $logger->info('ulafst:' . print_r(($indices), true));
         return $indices;
     }
@@ -127,7 +136,7 @@ class ElasticsearchHelper
                     } elseif (isset($hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'])) {
                         $title = $hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'];
                     }
-
+                    
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => $highlightValue, 'highlightKey' => $highlightKey);
                 } else {
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => '');

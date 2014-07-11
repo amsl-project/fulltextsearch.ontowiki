@@ -9,26 +9,29 @@
 class IndexHelper
 {
     
-    private $privateConfig;
+    private $indexService;
     private $curl;
     
     public function IndexHelper($privateConfig) {
-        init();
+        $this->privateConfig = $privateConfig;
+        $this->init();
+        $this->indexService = $privateConfig->fulltextsearch->indexService;
     }
     
-    public function init($privateConfig) {
-        $this->privateConfig = $privateConfig;
+    public function init() {
         $this->curl = curl_init();
     }
     
     public function finish() {
         curl_close($this->curl);
-        
     }
     
     public function triggerReindex($resourceUri) {
-        curl_setopt($this->curl, CURLOPT_URL, $this->_privateConfig->fulltextsearch->indexService . '/erm/index/uri?resourceUri=http://erm-hd/Kontakt/Bjoern');
+        curl_setopt($this->curl, CURLOPT_URL, $this->indexService . '/erm/index/uri?resourceUri=http%3A%2F%2Ferm-hd%2FKontakt%2FBjoerni');
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
-        curl_exec($this->curl);
+        $result = curl_exec($this->curl);
+        if ($result === FALSE) {
+            die(curl_error($this->curl));
+        }
     }
 }

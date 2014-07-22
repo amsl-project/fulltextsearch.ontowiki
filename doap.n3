@@ -23,7 +23,7 @@
   owconfig:config [
     a owconfig:Config;
     owconfig:id "fulltextsearch";
-    :hosts "172.18.113.206:9200";
+    :hosts "172.18.113.206:9201";
     :username "my_username";
     :password "my_password";
     :index "bibo:periodical";

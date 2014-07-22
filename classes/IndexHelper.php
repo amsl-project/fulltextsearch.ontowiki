@@ -27,7 +27,7 @@ class IndexHelper
     }
     
     public function triggerReindex($resourceUri) {
-        curl_setopt($this->curl, CURLOPT_URL, $this->indexService . '/erm/index/uri?resourceUri=http%3A%2F%2Ferm-hd%2FKontakt%2FBjoerni');
+        curl_setopt($this->curl, CURLOPT_URL, $this->indexService . '/erm/index/uri?resourceUri=' . $resourceUri);
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
         $result = curl_exec($this->curl);
         if ($result === FALSE) {

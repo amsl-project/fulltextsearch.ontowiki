@@ -36,6 +36,7 @@
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "20";
     :indexService "172.18.113.206:8080";
+    :indexServicePath "/erm/index/";
 ] ;
   doap:release :v1-0 .
 :v1-0 a doap:Version ;

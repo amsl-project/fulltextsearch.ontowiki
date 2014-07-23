@@ -30,12 +30,10 @@ class IndexHelper
     
     public function triggerReindex($resourceUri) {
         $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
-        OntoWiki::getInstance()->logger->info('DOGE1' . $url);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
         $result = curl_exec($this->curl);
         if ($result === FALSE) {
-            OntoWiki::getInstance()->logger->info('OH NO :(');
             die(curl_error($this->curl));
         }
     }

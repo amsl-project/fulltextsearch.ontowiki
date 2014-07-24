@@ -39,7 +39,7 @@ var titles = new Bloodhound({
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     limit: 7,
     remote: {
-        url: '/OntoWiki/fulltextsearch/fulltextsearch?query=%QUERY',
+        url: urlBase + 'fulltextsearch/fulltextsearch?query=%QUERY',
         ajax: {
             type: "POST"
         }

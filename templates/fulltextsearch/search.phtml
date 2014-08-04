@@ -79,7 +79,7 @@ function prettyPrint($a) {
                 . '&from=' 
                 . '0';
         ?>
-    ">fist</a>
+    "><?php echo $this->_("first") ?></a>
 
     <a class="minibutton" href="
         <?php
@@ -90,7 +90,7 @@ function prettyPrint($a) {
                 . '&from=' 
                 . $previous;
         ?>
-    ">previous</a>
+    "><?php echo $this->_("previous") ?></a>
 
     <a class="minibutton" href="
         <?php
@@ -101,7 +101,7 @@ function prettyPrint($a) {
                 . '&from=' 
                 . $next;
         ?>
-    ">next</a>
+    "><?php echo $this->_("next") ?></a>
 
     <?php echo $this->_("Showing results") . ' ' . $this->from . ' - ' . $next . ' ' . $this->_("of") . ' ' . $this->hits ?>
 

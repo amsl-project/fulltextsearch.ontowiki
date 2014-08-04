@@ -59,6 +59,53 @@ function prettyPrint($a) {
     </tbody>
 </table>
 <?php } else { echo "<p>No results found</p><br /><br />";};?>
+<div id="pagination">
+<?php
+    $now = $this->from;
+    $next = $now < $this->hits - 10 ? $now + 10 : $now;
+    $previous = $now == 0 ? 0 : $now - 10;
+    $indices = '';
+    if (isset($_GET['indices'])) {
+        $indices = '&indices=' . $_GET['indices'];
+    }
+?>
+
+    <a class="minibutton" href="
+        <?php
+            echo OntoWiki::getInstance()->getUrlBase() 
+                . 'fulltextsearch/search?input=' 
+                . $this->input 
+                . $indices
+                . '&from=' 
+                . '0';
+        ?>
+    ">fist</a>
+
+    <a class="minibutton" href="
+        <?php
+            echo OntoWiki::getInstance()->getUrlBase() 
+                . 'fulltextsearch/search?input=' 
+                . $this->input 
+                . $indices
+                . '&from=' 
+                . $previous;
+        ?>
+    ">previous</a>
+
+    <a class="minibutton" href="
+        <?php
+            echo OntoWiki::getInstance()->getUrlBase() 
+                . 'fulltextsearch/search?input=' 
+                . $this->input 
+                . $indices
+                . '&from=' 
+                . $next;
+        ?>
+    ">next</a>
+
+    <?php echo $this->_("Showing results") . ' ' . $this->from . ' - ' . $next . ' ' . $this->_("of") . ' ' . $this->hits ?>
+
+</div>
 <div id="show-json-result">[+] <?php echo $this->_('Show results as JSON') ?></div>
 <div id="json-result" style="display: none">
     <?php echo prettyPrint($this->jsonResult) ?>

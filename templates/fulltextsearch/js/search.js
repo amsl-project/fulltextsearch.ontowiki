@@ -88,7 +88,7 @@ $(document).ready(function() {
         $('#searchtext-input').keyup(function(event) {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
-                window.location = urlBase + 'fulltextsearch/search?input=' + input;
+                window.location = urlBase + 'fulltextsearch/search?input=' + input + '&from=0';
             };
         });
     });
@@ -127,7 +127,7 @@ $(document).ready(function() {
         selected = selected.substr(0, selected.length - 1);
         // append parameters to href of button link
         var _href = $("#filter-apply-btn").attr("href");
-        $("#filter-apply-btn").attr("href", _href + '&indices=' + selected);
+        $("#filter-apply-btn").attr("href", _href + '&indices=' + selected + '&from=0');
     });
 });
 // if the indics parameter is missing or empty all indices have been searched. 

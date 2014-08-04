@@ -34,7 +34,7 @@
             "http://www.w3.org/2006/vcard/ns#family-name";
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
-    :size "20";
+    :size "10";
     :indexService "172.18.113.206:8080";
     :indexServicePath "/erm/index/";
 ] ;

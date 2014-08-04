@@ -74,9 +74,10 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $this->addModuleContext('main.window.fulltextsearch.search');
         $store = $this->_erfurt->getStore();
         $this->_erfurt->authenticate();
-        
+
         $params = $this->_request->getParams();
         $input = $params['input'];
+        $from = $params['from'];
         
         $indices = '';
         if (isset($params['indices'])) {
@@ -86,7 +87,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         
-        $result = $esHelper->searchAndReturnEverything($input, $indices);
+        $result = $esHelper->searchAndReturnEverything($input, $indices, $from);
         $this->view->jsonResult = $result['resultSet'];
 
         $this->view->availableIndices = $esHelper->getAvailableIndices(); 
@@ -96,6 +97,9 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         
         $this->view->resultArray = ElasticsearchUtils::extractResults($result['resultSet']);
         $this->view->query = $result['query'];
+        $this->view->from = $from;
+        $this->view->input = $input;
+        $this->view->hits = $result['resultSet']['hits']['total'];
         
         OntoWiki::getInstance()->getNavigation()->disableNavigation();
     }

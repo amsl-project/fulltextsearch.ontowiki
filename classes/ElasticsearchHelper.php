@@ -157,7 +157,7 @@ class ElasticsearchHelper
      * @param  String $indices The indices to be searched.
      * @return array $fullResults The array containing the complete result set.
      */
-    public function searchAndReturnEverything($searchTerm, $indices) {
+    public function searchAndReturnEverything($searchTerm, $indices, $from) {
         
         $logger = OntoWiki::getInstance()->logger;
         
@@ -179,6 +179,7 @@ class ElasticsearchHelper
                 $partialQuery.= $term . "* ";
             }
             $query['body']['size'] = $size;
+            $query['body']['from'] = $from;
             $query['body']['query']['query_string']['query'] = $partialQuery;
             $query['body']['query']['query_string']['fields'] = $fields;
             $query['body']['query']['query_string']['default_operator'] = $defaultOperator;

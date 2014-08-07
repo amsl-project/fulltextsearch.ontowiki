@@ -29,7 +29,6 @@ class IndexHelper
     }
     
     public function triggerReindex($resourceUri) {
-        OntoWiki::getInstance()->logger->debug('');
         $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
@@ -41,6 +40,7 @@ class IndexHelper
     
     public function triggerDeleteResource($resourceUri) {
         $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
+        OntoWiki::getInstance()->logger->debug('triggerDeleteResource: ' . $resourceUri);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($this->curl, CURLOPT_HEADER, 0);

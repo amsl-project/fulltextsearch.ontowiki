@@ -17,14 +17,19 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
         $indexHelper = new IndexHelper($this->_privateConfig);
         $indexHelper->triggerReindex($event->resource);
     }
-
+    
     public function onDeleteResourceAction($event) {
-        $resource = $event->resource;
         $model = $event->model;
         $indexHelper = new IndexHelper($this->_privateConfig);
-        $indexHelper->triggerDeleteResource($event->resource);
+        $resources = $event->resources;
+        if (!is_array($resources)) {
+            $resources = array($resources);
+        }
+        foreach ($resources as $resource) {
+            $indexHelper->triggerDeleteResource($resource);
+        }
     }
-
+    
     public function onReindexAction($event) {
         $resource = $event->resource;
         $model = $event->model;

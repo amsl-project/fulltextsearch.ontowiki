@@ -19,6 +19,7 @@
   owconfig:authorLabel "AKSW" ;
   owconfig:pluginEvent event:onIndexAction ;
   owconfig:pluginEvent event:onReindexAction ;
+  owconfig:pluginEvent event:onDeleteResourceAction ;
   doap:maintainer <http://aksw.org> ;
   owconfig:config [
     a owconfig:Config;

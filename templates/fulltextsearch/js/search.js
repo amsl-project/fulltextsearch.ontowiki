@@ -63,9 +63,10 @@ $(document).ready(function() {
     // every result gets a paragraph containing the title and a visualization of the
     // the part elasticsearch has matched (highlight)
     var source = '<p>';
-    source += '<strong class="highlight-title">{{title}}</strong><br>';
+    source += '<strong class="highlight-title">{{title}}</strong><br><span class="origin-index">{{{originIndex}}}</span><br>';
     source += '<span class="hint--bottom" data-hint="{{highlightKey}}">';
-    source += '<span class="uri-suggestion">{{{highlight}}}</span></span>';
+    source += '<span class="uri-suggestion">{{{highlight}}}</span>';
+    source += '</span>';
     source += '</p>';
     var noResults = 'No results found';
     var trigger = 'Press enter to trigger an advanced search';

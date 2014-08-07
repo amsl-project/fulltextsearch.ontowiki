@@ -125,13 +125,15 @@ class ElasticsearchHelper
             $results = array();
             
             $logger->info('fullresult:' . print_r(($fullResults), true));
+            $highlightCount = 0;
             foreach ($fullResults['hits']['hits'] as $hit) {
                 if (isset($hit['highlight'])) {
                     $highlight = $hit['highlight'];
                     $highlightValues[] = array_values($highlight);
                     $highlightKeys[] = array_keys($highlight);
-                    $highlightValue = $highlightValues[0];
-                    $highlightKey = $highlightKeys[0];
+                    $highlightValue = $highlightValues[$highlightCount];
+                    $highlightKey = $highlightKeys[$highlightCount];
+                    $originIndex = $hit['_index'];
                     
                     // show title or label
                     $title = $hit['_source']['@id'];
@@ -140,11 +142,13 @@ class ElasticsearchHelper
                     } elseif (isset($hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'])) {
                         $title = $hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'];
                     }
-                    
-                    $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => $highlightValue, 'highlightKey' => $highlightKey);
+                    //$title = $title . ' (' . $originIndex . ')';
+
+                    $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => $highlightValue, 'highlightKey' => $highlightKey, 'originIndex' => $originIndex);
                 } else {
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => '');
                 }
+                $highlightCount++;
             }
         }
         

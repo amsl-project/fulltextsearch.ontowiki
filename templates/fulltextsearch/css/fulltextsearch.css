@@ -92,6 +92,14 @@
 .uri-suggestion {
     font-weight: 200;
     font-size: 13px;
+    margin-left: 15px;
+}
+
+.origin-index {
+    font-weight: 50;
+    font-size: 13px;
+    margin-left: 15px;
+    /*color: #545454!important;*/
 }
 /* Fulltext search result page design tweaks */
 

@@ -28,12 +28,16 @@
     :username "my_username";
     :password "my_password";
     :index "bibo:periodical";
-    :fields "http://purl.org/dc/elements/1.1/title", 
-            "http://purl.org/dc/elements/1.1/publisher", 
-            "http://rdvocab.info/otherTitleInformation",
-            "http://www.w3.org/2006/vcard/ns#given-name",
+    :fields "http://www.w3.org/2000/01/rdf-schema#label",
+            "http://vocab.ub.uni-leipzig.de/bibrm/shortBudget",
             "http://www.w3.org/2006/vcard/ns#family-name",
-            "http://www.w3.org/2000/01/rdf-schema#label";
+            "http://vocab.ub.uni-leipzig.de/bibrm/eralttitle",
+            "http://purl.org/lobid/lv#isil",
+            "http://xmlns.com/foaf/0.1/name",
+            "http://vocab.ub.uni-leipzig.de/bibrm/licenseType",
+            "http://purl.org/dc/elements/1.1/publisher",
+            "http://purl.org/dc/elements/1.1/title",
+            "http://purl.org/dc/terms/alternative";
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "10";

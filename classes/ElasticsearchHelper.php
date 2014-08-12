@@ -60,7 +60,7 @@ class ElasticsearchHelper
     }
     
     /**
-     * Returns all available Indices except for the settings index.
+     * Returns all available Indices except for the ones that start with a dot.
      */
     public function getAvailableIndices() {
         $logger = OntoWiki::getInstance()->logger;
@@ -78,8 +78,13 @@ class ElasticsearchHelper
         
         // remove settings index.
         $indices = array_diff($indices, array(".settings"));
-        $logger->info('ulafst:' . print_r(($indices), true));
         return $indices;
+    }
+    
+    public function getAvailableIndicesWithMetadata() {
+        $logger = OntoWiki::getInstance()->logger;
+        $indices = $this->getClient(static ::$_privateConfig)->indices()->status();
+        return $indices['indices'];
     }
     
     /**
@@ -142,8 +147,9 @@ class ElasticsearchHelper
                     } elseif (isset($hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'])) {
                         $title = $hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'];
                     }
+                    
                     //$title = $title . ' (' . $originIndex . ')';
-
+                    
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => $highlightValue, 'highlightKey' => $highlightKey, 'originIndex' => $originIndex);
                 } else {
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => '');

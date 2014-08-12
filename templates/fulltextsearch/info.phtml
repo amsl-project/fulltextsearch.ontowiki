@@ -1,0 +1,34 @@
+<?php
+function prettyPrint($a) {
+    echo "<pre>";
+    // $pretty = json_encode($a, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    print_r($a);
+    echo "</pre>";
+}
+?>
+
+<h1>Create new Index</h1>
+<form method="post" action="http://localhost/OntoWiki/fulltextsearch/create" class="simple-input" name="createIndex">
+    <fieldset>
+        <input name="redirect-uri" value="%2FOntoWiki%2Ffulltextsearch%2Finfo" type="hidden">
+        <div>
+            <input class="text focusNextOnEnter" id="indexname" name="indexname" value="" type="text">
+            <a id="submitcreateindex" class="minibutton submit">Create Index</a>
+        </div>
+    </fieldset>
+</form>
+
+<h1>Available Indices</h1>
+<?php
+    $indices = $this->indices;
+    $keys = array_keys($indices);
+    foreach ($keys as $key) {
+        echo '<h4>' . $key . '</h4>';
+        echo 'documents: ' . $indices[$key]['docs']['num_docs'];
+        echo "<br>";
+        echo '<a href=#>reindex</a>';
+        echo "<br>";
+        echo "<br>";
+    }
+?>
+<?php echo prettyPrint($this->model->getPredicates()) ?>

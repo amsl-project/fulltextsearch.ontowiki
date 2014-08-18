@@ -50,6 +50,24 @@ class IndexHelper
         curl_exec($this->curl);
     }
     
+    public function triggerCreateIndex($prefixUri) {
+        $_owApp = OntoWiki::getInstance();
+        $_owApp->logger->debug('stuff happening in triggerCreateIndex: ');
+        $model = $_owApp->selectedModel;
+        $resourceUri = Erfurt_Uri::getFromQnameOrUri($prefixUri, $model);
+        $_owApp->logger->debug('resourceUri: ' . $resourceUri);
+        $url = $this->indexService . $this->indexServicePath . 'clazz?index=' . $prefixUri . '&objectType=' . $prefixUri . '&resourceClazz=' . $resourceUri;
+        
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        // curl_setopt($this->curl, CURLOPT_HEADER, 0);
+        // curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+        $response = curl_exec($this->curl);
+        $_owApp->logger->debug('response: ' . $response);
+        return $response;
+    }
+    
     // public function triggerClassReindex($value = '') {
     //     curl_setopt($this->curl, CURLOPT_URL, $this->indexService . "172.18.113.206:8080/erm/query/ixuZmgSVRmDdNkUmkAIrCREjr/index/objectType=bibrm%3AContact&index=bibrm%3AContact&resourceClazz=http%3A%2F%2Fvocab.ub.uni-leipzig.de%2Fbibrm%2FContact");
     //     curl_setopt($this->curl, CURLOPT_HEADER, 0);

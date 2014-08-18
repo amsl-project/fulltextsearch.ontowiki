@@ -9,6 +9,7 @@
 
 require_once realpath(dirname(__FILE__)) . '/classes/ElasticsearchHelper.php';
 require_once realpath(dirname(__FILE__)) . '/classes/ElasticsearchUtils.php';
+require_once realpath(dirname(__FILE__)) . '/classes/IndexHelper.php';
 
 /**
  * Fulltextsearch component controller.
@@ -104,25 +105,46 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         OntoWiki::getInstance()->getNavigation()->disableNavigation();
     }
     
+    /**
+     * Displays an information page.
+     * @return [type]
+     */
     public function infoAction() {
+        $_owApp = OntoWiki::getInstance();
+        $logger = $_owApp->logger;
         $translate = $this->_owApp->translate;
         $this->view->placeholder('main.window.title')->set($translate->_('Fulltext Search Info'));
         $this->addModuleContext('main.window.fulltextsearch.info');
         $store = $this->_erfurt->getStore();
         $this->_erfurt->authenticate();
-        OntoWiki::getInstance()->getNavigation()->disableNavigation();
-
+        $_owApp->getNavigation()->disableNavigation();
+        
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
-        $indices = $esHelper->getAvailableIndicesWithMetadata();        
+        $indices = $esHelper->getAvailableIndicesWithMetadata();
         $this->view->indices = $indices;
-
+    }
+    
+    /**
+     * Creates a new index, requires indexname parameter.
+     * @return [type]
+     */
+    public function createindexAction() {
         $_owApp = OntoWiki::getInstance();
-        $logger     = $_owApp->logger;
-        $store      = $_owApp->erfurt->getStore();
-        $graph      = $_owApp->selectedModel;
-        $resource   = 'http://ubl.amsl.technology/erm/budget/test1234';
-        // OntoWiki::getInstance()->logger->info('doge2 resource: ' . print_r($resource, true) . '\nstore: ' . print_r($store, true) . '\ngraph: ' . print_r($graph, true));
-        $model      = new OntoWiki_Model_Resource($store, $graph, (string)$resource);
-        $this->view->model = $model;
+        $logger = $_owApp->logger;
+
+        // tells the OntoWiki to not apply the template to this action
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        $store = $this->_erfurt->getStore();
+        $this->_erfurt->authenticate();
+        
+        $params = $this->_request->getParams();
+        $indexname = $params['indexname'];
+        
+        $indexHelper = new IndexHelper($this->_privateConfig);
+        $response = $indexHelper->triggerCreateIndex($indexname);
+        $this->_response->setHeader('Content-Type', 'text/html');
+        $this->_response->setBody($response);
     }
 }

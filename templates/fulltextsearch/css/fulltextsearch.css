@@ -120,3 +120,25 @@
 #filter-list a {
     margin-top: 0.5em;
 }
+
+.twoColumn {
+    clear: left;
+}
+
+.width29 {
+    width: 29%;
+}
+
+.width69 {
+    width: 59%;
+}
+.margin {
+    margin: 0.5%;
+}
+.float {
+    float: left;
+}
+
+.indexBox {
+    text-align: left;
+}

@@ -6,14 +6,18 @@
  * @copyright Copyright (c) 2013, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
-class IndexHelper
+class IndexServiceConnector
 {
     
     private $indexService;
     private $indexServicePath;
     private $curl;
     
-    public function IndexHelper($privateConfig) {
+    /**
+     * Connects to the IndexService and provides several functions to tigger index operations.
+     * @param [type] $privateConfig
+     */
+    public function IndexServiceConnector($privateConfig) {
         $this->privateConfig = $privateConfig;
         $this->init();
         $this->indexService = $privateConfig->fulltextsearch->indexService;
@@ -28,16 +32,30 @@ class IndexHelper
         curl_close($this->curl);
     }
     
-    public function triggerReindex($resourceUri) {
-        $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
+    /**
+     * Triggers an event that re-indexes the given resource.
+     * @param  [type] $resourceUri
+     * @return [type]
+     */
+    public function triggerReindex($resourceUri, $classUri = null) {
+        if ($classUri === null) {
+            $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
+        } else {
+            $classQname = OntoWiki_Utils::compactUri($classUri);
+            $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri . '&index=' . $classQname . '&objectType=' . $classQname;
+        }
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
         curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
-        curl_exec($this->curl);
+        return curl_exec($this->curl); 
     }
     
+    /**
+     * Triggers an event that deletes a resource with the given resource URI.
+     * @param  [type] $resourceUri
+     */
     public function triggerDeleteResource($resourceUri) {
         $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
         OntoWiki::getInstance()->logger->debug('triggerDeleteResource: ' . $resourceUri);
@@ -50,32 +68,30 @@ class IndexHelper
         curl_exec($this->curl);
     }
     
+    /**
+     * Triggers an event which will create a new index from the given prefix uri.
+     * @param  string $prefixUri
+     * @return mixed curl response
+     */
     public function triggerCreateIndex($prefixUri) {
         $_owApp = OntoWiki::getInstance();
         $_owApp->logger->debug('stuff happening in triggerCreateIndex: ');
         $model = $_owApp->selectedModel;
         $resourceUri = Erfurt_Uri::getFromQnameOrUri($prefixUri, $model);
         $_owApp->logger->debug('resourceUri: ' . $resourceUri);
-        $url = $this->indexService . $this->indexServicePath . 'clazz?index=' . $prefixUri . '&objectType=' . $prefixUri . '&resourceClazz=' . $resourceUri;
+        
+        $url = $this->indexService . $this->indexServicePath;
+        $url .= 'clazz?index=' . $prefixUri;
+        $url .= '&objectType=' . $prefixUri;
+        $url .= '&resourceClazz=' . $resourceUri;
         
         curl_setopt($this->curl, CURLOPT_URL, $url);
-        // curl_setopt($this->curl, CURLOPT_HEADER, 0);
-        // curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curl, CURLOPT_HEADER, 0);
+        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, false);
         curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
         $response = curl_exec($this->curl);
         $_owApp->logger->debug('response: ' . $response);
         return $response;
     }
-    
-    // public function triggerClassReindex($value = '') {
-    //     curl_setopt($this->curl, CURLOPT_URL, $this->indexService . "172.18.113.206:8080/erm/query/ixuZmgSVRmDdNkUmkAIrCREjr/index/objectType=bibrm%3AContact&index=bibrm%3AContact&resourceClazz=http%3A%2F%2Fvocab.ub.uni-leipzig.de%2Fbibrm%2FContact");
-    //     curl_setopt($this->curl, CURLOPT_HEADER, 0);
-    //     $result = curl_exec($this->curl);
-    //     if ($result === FALSE) {
-    //         die(curl_error($this->curl));
-    //     }
-    // }
-    
-    
 }

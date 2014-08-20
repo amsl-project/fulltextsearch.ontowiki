@@ -7,20 +7,26 @@
  * @license   http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 require_once 'OntoWiki/Plugin.php';
-require_once realpath(dirname(__FILE__)) . '/classes/IndexHelper.php';
+require_once realpath(dirname(__FILE__)) . '/classes/IndexServiceConnector.php';
 class FulltextsearchPlugin extends OntoWiki_Plugin
 {
     
     public function onIndexAction($event) {
+        $_owApp = OntoWiki::getInstance();
+        $logger = $_owApp->logger;
         $resource = $event->resource;
         $model = $event->model;
-        $indexHelper = new IndexHelper($this->_privateConfig);
-        $indexHelper->triggerReindex($event->resource);
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+        $class = $this->findClass($event->resource);
+        $return = $indexServiceConnector->triggerReindex($event->resource, $class);
+        $indexServiceConnector->finish();
+        $logger->debug('onIndexAction: ' . print_r($return, true));
+
     }
     
     public function onDeleteResourceAction($event) {
         $model = $event->model;
-        $indexHelper = new IndexHelper($this->_privateConfig);
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $resources = $event->resources;
         if (!is_array($resources)) {
             $resources = array($resources);
@@ -28,12 +34,13 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
         foreach ($resources as $resource) {
             if ($this->canBeDeleted($resource)) {
                 OntoWiki::getInstance()->logger->info('FulltextsearchPlugin: resource ' . $resource . ' can be deleted');
-                $indexHelper->triggerDeleteResource($resource);
+                $indexServiceConnector->triggerDeleteResource($resource);
             } else {
                 OntoWiki::getInstance()->logger->info('FulltextsearchPlugin: resource ' . $resource . ' cannot be deleted');
-                $indexHelper->triggerReindex($resource);
+                $indexServiceConnector->triggerReindex($resource);
             }
         }
+        $indexServiceConnector->finish();
     }
     
     public function onReindexAction($event) {
@@ -48,15 +55,31 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
      */
     private function canBeDeleted($resource) {
         $_owApp = OntoWiki::getInstance();
-        $store      = $_owApp->erfurt->getStore();
-        $graph      = $_owApp->selectedModel;
-        $model      = new OntoWiki_Model_Resource($store, $graph, (string)$resource);
-        $predicates = $model->getPredicates();
+        $store = $_owApp->erfurt->getStore();
+        $selectedModel = $_owApp->selectedModel;
+        $modelResource = new OntoWiki_Model_Resource($store, $selectedModel, (string)$resource);
+        $predicates = $modelResource->getPredicates();
         if (count($predicates) == 0) {
             return true;
         } else {
             return false;
         }
-
+    }
+    
+    /**
+     * Find a class to a given resource uri.
+     */
+    public function findClass($resource) {
+        $_owApp = OntoWiki::getInstance();
+        $store = $_owApp->erfurt->getStore();
+        $selectedModel = $_owApp->selectedModel;
+        $modelResource = $selectedModel->getResource($resource);
+        $description = $modelResource->getDescription();
+        $type = $description[$resource][EF_RDF_TYPE][0]['value'];
+        if ($type !== null) {
+            return $type;
+        } else {
+            return null;
+        }
     }
 }

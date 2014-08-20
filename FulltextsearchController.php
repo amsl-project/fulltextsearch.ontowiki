@@ -9,7 +9,7 @@
 
 require_once realpath(dirname(__FILE__)) . '/classes/ElasticsearchHelper.php';
 require_once realpath(dirname(__FILE__)) . '/classes/ElasticsearchUtils.php';
-require_once realpath(dirname(__FILE__)) . '/classes/IndexHelper.php';
+require_once realpath(dirname(__FILE__)) . '/classes/IndexServiceConnector.php';
 
 /**
  * Fulltextsearch component controller.
@@ -28,9 +28,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         // tells the OntoWiki to not apply the template to this action
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-        
-        $store = $this->_erfurt->getStore();
-        $this->_erfurt->authenticate();
         
         $translate = $this->_owApp->translate;
         
@@ -73,8 +70,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         
         $this->view->placeholder('main.window.title')->set($translate->_('Fulltext Search'));
         $this->addModuleContext('main.window.fulltextsearch.search');
-        $store = $this->_erfurt->getStore();
-        $this->_erfurt->authenticate();
         
         $params = $this->_request->getParams();
         $input = $params['input'];
@@ -122,6 +117,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         $indices = $esHelper->getAvailableIndicesWithMetadata();
         $this->view->indices = $indices;
+
     }
     
     /**
@@ -142,8 +138,9 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $params = $this->_request->getParams();
         $indexname = $params['indexname'];
         
-        $indexHelper = new IndexHelper($this->_privateConfig);
-        $response = $indexHelper->triggerCreateIndex($indexname);
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+        $response = $indexServiceConnector->triggerCreateIndex($indexname);
+        $indexServiceConnector->finish();
         $this->_response->setHeader('Content-Type', 'text/html');
         $this->_response->setBody($response);
     }

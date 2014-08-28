@@ -49,7 +49,7 @@ class IndexServiceConnector
         curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
-        return curl_exec($this->curl); 
+        return curl_exec($this->curl);
     }
     
     /**
@@ -58,7 +58,6 @@ class IndexServiceConnector
      */
     public function triggerDeleteResource($resourceUri) {
         $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
-        OntoWiki::getInstance()->logger->debug('triggerDeleteResource: ' . $resourceUri);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
@@ -75,23 +74,53 @@ class IndexServiceConnector
      */
     public function triggerCreateIndex($prefixUri) {
         $_owApp = OntoWiki::getInstance();
-        $_owApp->logger->debug('stuff happening in triggerCreateIndex: ');
-        $model = $_owApp->selectedModel;
-        $resourceUri = Erfurt_Uri::getFromQnameOrUri($prefixUri, $model);
-        $_owApp->logger->debug('resourceUri: ' . $resourceUri);
-        
-        $url = $this->indexService . $this->indexServicePath;
-        $url .= 'clazz?index=' . $prefixUri;
-        $url .= '&objectType=' . $prefixUri;
-        $url .= '&resourceClazz=' . $resourceUri;
-        
+        $translate = $_owApp->translate;
+        if (isset($_owApp->selectedModel)) {
+            $model = $_owApp->selectedModel;
+            $resourceUri = Erfurt_Uri::getFromQnameOrUri($prefixUri, $model);
+            
+            $url = $this->indexService . $this->indexServicePath;
+            $url.= 'clazz?index=' . $prefixUri;
+            $url.= '&objectType=' . $prefixUri;
+            $url.= '&resourceClazz=' . $resourceUri;
+            
+            curl_setopt($this->curl, CURLOPT_URL, $url);
+            curl_setopt($this->curl, CURLOPT_HEADER, 0);
+            curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
+            curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, false);
+            curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+            $response = curl_exec($this->curl);
+        } else {
+            $response = $translate->_('error: please choose a knowledge base');
+        }
+        return $response;
+    }
+    
+    public function triggerDeleteIndex($indexName) {
+        $url = $this->indexService . $this->indexServicePath . 'delete?index=' . $indexName;
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($this->curl, CURLOPT_HEADER, 0);
+        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+        $response = curl_exec($this->curl);
+        return $response;
+    }
+    
+    public function triggerReindexClass($indexName = null) {
+        if ($indexName !== null) {
+            $url = $this->indexService . $this->indexServicePath . 'reindex?index=' . $indexName;
+        } else {
+            $url = $this->indexService . $this->indexServicePath . 'reindex';
+        }
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
         curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+        OntoWiki::getInstance()->logger->info('triggerReindexClass: ' . $url);
         $response = curl_exec($this->curl);
-        $_owApp->logger->debug('response: ' . $response);
         return $response;
     }
 }

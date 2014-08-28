@@ -110,14 +110,11 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $translate = $this->_owApp->translate;
         $this->view->placeholder('main.window.title')->set($translate->_('Fulltext Search Info'));
         $this->addModuleContext('main.window.fulltextsearch.info');
-        $store = $this->_erfurt->getStore();
-        $this->_erfurt->authenticate();
         $_owApp->getNavigation()->disableNavigation();
         
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         $indices = $esHelper->getAvailableIndicesWithMetadata();
         $this->view->indices = $indices;
-
     }
     
     /**
@@ -127,13 +124,10 @@ class FulltextsearchController extends OntoWiki_Controller_Component
     public function createindexAction() {
         $_owApp = OntoWiki::getInstance();
         $logger = $_owApp->logger;
-
+        
         // tells the OntoWiki to not apply the template to this action
         $this->_helper->viewRenderer->setNoRender();
         $this->_helper->layout->disableLayout();
-        
-        $store = $this->_erfurt->getStore();
-        $this->_erfurt->authenticate();
         
         $params = $this->_request->getParams();
         $indexname = $params['indexname'];
@@ -141,7 +135,63 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $response = $indexServiceConnector->triggerCreateIndex($indexname);
         $indexServiceConnector->finish();
+        $_owApp->logger->info('dagucken' . $response);
+        // $this->_response->setHeader('Content-Type', 'text/html');
+        $this->_response->setBody(json_encode($response));
+    }
+    
+    public function deleteindexAction() {
+        $_owApp = OntoWiki::getInstance();
+        $logger = $_owApp->logger;
+        
+        // tells the OntoWiki to not apply the template to this action
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        $params = $this->_request->getParams();
+        $indexname = $params['indexname'];
+        
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+        $response = $indexServiceConnector->triggerDeleteIndex($indexname);
+        $indexServiceConnector->finish();
         $this->_response->setHeader('Content-Type', 'text/html');
         $this->_response->setBody($response);
+        $url = OntoWiki::getInstance()->getUrlBase() . 'fulltextsearch/info';
+        if ($response === 'true') {
+            $this->_redirect($url, array('code' => 302));
+        } else {
+            $this->_redirect($url, array('code' => 500));
+        }
+    }
+    
+    public function reindexclassAction() {
+        $_owApp = OntoWiki::getInstance();
+        $logger = $_owApp->logger;
+        
+        // tells the OntoWiki to not apply the template to this action
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+        
+        $params = $this->_request->getParams();
+        if (isset($params['indexname'])) {
+            $indexname = $params['indexname'];
+        } else {
+            $indexname = null;
+        }
+        
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+        $response = $indexServiceConnector->triggerReindexClass($indexname);
+        $indexServiceConnector->finish();
+        $this->_response->setHeader('Content-Type', 'text/html');
+        $this->_response->setBody($response);
+        $url = OntoWiki::getInstance()->getUrlBase() . 'fulltextsearch/info';
+        
+        // if ($response === 'true') {
+        // $this->_redirect($url, array('code' => 302));
+        // } else {
+        // $this->_redirect($url, array('code' => 500));
+        // }
+        
+        
     }
 }

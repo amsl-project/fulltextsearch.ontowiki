@@ -5,21 +5,34 @@ function prettyPrint($a) {
     print_r($a);
     echo "</pre>";
 }
+function startsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    return (substr($haystack, 0, $length) === $needle);
+}
 ?>
 <div class='twoColumn'>
     <div class="width29 float margin">
         <h1>Available Indices</h1>
+        <p>
+            <a href='reindexclass'>full reindex</a>
+        </p>
         <?php
             $indices = $this->indices;
             $keys = array_keys($indices);
             foreach ($keys as $key) {
+
+                // hide indices starting with a dot
+                if (startsWith($key, ".")) {
+                    break;
+                }
                 echo '<div class="messagebox indexBox">';
-                echo '<h4>' . $key . '</h4>';
-                echo 'documents: ' . $indices[$key]['docs']['num_docs'];
+                echo '<strong>' . $key . '</strong>';
+                echo ' : ' . $indices[$key]['docs']['num_docs'];
                 echo "<br>";
-                echo '<a href=#>reindex</a>';
+                echo '<a href=reindexclass?indexname=' . $key .'>reindex</a>';
                 echo "<br>";
-                echo '<a href=#>delete</a>';
+                echo '<a href=deleteindex?indexname=' . $key .'>delete</a>';
                 echo "<br>";
                 echo "</div>";
             }
@@ -36,7 +49,7 @@ function prettyPrint($a) {
                 </div>
             </fieldset>
         </form>
-        <h1>Index Server Information</h1>
+        <!-- <h1>Index Server Information</h1> -->
     </div>
 </div>
 <?php

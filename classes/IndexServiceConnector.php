@@ -123,4 +123,8 @@ class IndexServiceConnector
         $response = curl_exec($this->curl);
         return $response;
     }
+    
+    public function triggerFullreindex() {
+        $this->triggerReindexClass();        
+    }
 }

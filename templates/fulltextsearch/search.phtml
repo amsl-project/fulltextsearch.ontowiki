@@ -47,7 +47,7 @@ function prettyPrint($a) {
         <?php foreach ($this->resultArray as $result) :?>
         <tr class="<?php echo $odd ? 'odd' : 'even'; $odd = !$odd; ?> ">
             <td><a href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>resource/properties?r=<?php echo $result['id']; ?>"><?php echo $result['id']; ?></a></td>
-            <td><?php echo $result['title']; ?></td>
+            <td><?php if (is_array($result['title'])) {echo $result['title'][0];} else {echo $result['title'];} ?></td>
             <td>
                 <span class="hint--bottom" data-hint="<?php echo array_keys($result['highlight'])[0] ?>">
                 <?php echo array_values(array_values($result['highlight'])[0])[0]; ?>

@@ -78,7 +78,8 @@ $(document).ready(function() {
         source: titles.ttAdapter(),
         templates: {
             empty: ['<div class="empty-message">', '<strong>' + noResults + '</strong><p>' + trigger + '</p?>', '</div>'].join('\n'),
-            suggestion: Handlebars.compile(source)
+            suggestion: Handlebars.compile(source),
+            footer: '<div class="empty-message">Maximal 7 results are shown. Press Enter to see all.</div>'
         }
     }).on('typeahead:selected typeahead:autocompleted', function(event, datum) {
         // if a autocomplete-generated result is selected the user will be directed there directly

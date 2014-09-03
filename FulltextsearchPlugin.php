@@ -21,7 +21,6 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
         $return = $indexServiceConnector->triggerReindex($event->resource, $class);
         $indexServiceConnector->finish();
         $logger->debug('onIndexAction: ' . print_r($return, true));
-
     }
     
     public function onDeleteResourceAction($event) {
@@ -42,10 +41,11 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
         }
         $indexServiceConnector->finish();
     }
-    
-    public function onReindexAction($event) {
-        $resource = $event->resource;
-        $model = $event->model;
+
+    public function onFullreindexAction($event) {
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+        $return = $indexServiceConnector->triggerFullreindex();
+        $indexServiceConnector->finish();
     }
     
     /**

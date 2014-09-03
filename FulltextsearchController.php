@@ -135,7 +135,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $response = $indexServiceConnector->triggerCreateIndex($indexname);
         $indexServiceConnector->finish();
-        $_owApp->logger->info('dagucken' . $response);
+        $_owApp->logger->debug('Fulltextsearch createindexAction response:' . $response);
         // $this->_response->setHeader('Content-Type', 'text/html');
         $this->_response->setBody(json_encode($response));
     }
@@ -182,15 +182,13 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $response = $indexServiceConnector->triggerReindexClass($indexname);
         $indexServiceConnector->finish();
-        $this->_response->setHeader('Content-Type', 'text/html');
-        $this->_response->setBody($response);
         $url = OntoWiki::getInstance()->getUrlBase() . 'fulltextsearch/info';
-        
-        // if ($response === 'true') {
-        // $this->_redirect($url, array('code' => 302));
-        // } else {
-        // $this->_redirect($url, array('code' => 500));
-        // }
+    
+        if ($response === 'true') {
+            $this->_redirect($url, array('code' => 302));
+        } else {
+            $this->_redirect($url, array('code' => 500));
+        }
         
         
     }

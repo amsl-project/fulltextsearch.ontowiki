@@ -20,6 +20,7 @@
   owconfig:pluginEvent event:onIndexAction ;
   owconfig:pluginEvent event:onReindexAction ;
   owconfig:pluginEvent event:onDeleteResourceAction ;
+  owconfig:pluginEvent event:onFullreindexAction ;
   doap:maintainer <http://aksw.org> ;
   owconfig:config [
     a owconfig:Config;
@@ -37,7 +38,9 @@
             "http://vocab.ub.uni-leipzig.de/bibrm/licenseType",
             "http://purl.org/dc/elements/1.1/publisher",
             "http://purl.org/dc/elements/1.1/title",
-            "http://purl.org/dc/terms/alternative";
+            "http://purl.org/dc/terms/alternative",
+            "http://www.w3.org/2006/vcard/ns#hasOrganizationName",
+            "http://vocab.ub.uni-leipzig.de/bibrm/shortFaculty";
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "10";

@@ -41,7 +41,7 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
         }
         $indexServiceConnector->finish();
     }
-
+    
     public function onFullreindexAction($event) {
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $return = $indexServiceConnector->triggerFullreindex();
@@ -75,9 +75,13 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
         $selectedModel = $_owApp->selectedModel;
         $modelResource = $selectedModel->getResource($resource);
         $description = $modelResource->getDescription();
-        $type = $description[$resource][EF_RDF_TYPE][0]['value'];
-        if ($type !== null) {
-            return $type;
+        if (isset($description[$resource][EF_RDF_TYPE][0]['value'])) {
+            $type = $description[$resource][EF_RDF_TYPE][0]['value'];
+            if ($type !== null) {
+                return $type;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

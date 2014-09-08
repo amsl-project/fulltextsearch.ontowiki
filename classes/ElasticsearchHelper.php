@@ -119,6 +119,7 @@ class ElasticsearchHelper
             
             $highlightFields = array();
             foreach ($fields as $field) {
+                $field = $this->removeBoostingOperator($field);
                 $tmp = array($field => array('fragment_size' => 500, 'number_of_fragments' => 1));
                 array_push($highlightFields, $tmp);
             }
@@ -196,6 +197,7 @@ class ElasticsearchHelper
             
             $highlightFields = array();
             foreach ($fields as $field) {
+                $field = $this->removeBoostingOperator($field);
                 $tmp = array($field => array('fragment_size' => 500, 'number_of_fragments' => 1));
                 array_push($highlightFields, $tmp);
             }
@@ -229,5 +231,19 @@ class ElasticsearchHelper
      * Since this a singleton, cloning is not allowed.
      */
     protected function __clone() {
+    }
+    
+    /**
+     * [removeBoostingOperator description]
+     * @param  [type] $field [description]
+     * @return [type]        [description]
+     */
+    private function removeBoostingOperator($field) {
+        $pos = strpos($field, "^");
+        if ($pos === false) {
+            return $field;
+        } else {
+            return substr($field, 0, $pos);
+        }
     }
 }

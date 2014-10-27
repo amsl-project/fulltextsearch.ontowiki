@@ -44,6 +44,8 @@ class IndexServiceConnector
             $classQname = OntoWiki_Utils::compactUri($classUri);
             $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri . '&index=' . $classQname . '&objectType=' . $classQname;
         }
+        $_owApp = OntoWiki::getInstance();
+        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerDeleteResource reindexing resource: ' . $resourceUri);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
         curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
@@ -58,6 +60,8 @@ class IndexServiceConnector
      */
     public function triggerDeleteResource($resourceUri) {
         $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
+        $_owApp = OntoWiki::getInstance();
+        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerDeleteResource deleting resource: ' . $resourceUri);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
@@ -98,6 +102,8 @@ class IndexServiceConnector
     
     public function triggerDeleteIndex($indexName) {
         $url = $this->indexService . $this->indexServicePath . 'delete?index=' . $indexName;
+        $_owApp = OntoWiki::getInstance();
+        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerDeleteIndex->url: ' . $url);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
@@ -114,6 +120,8 @@ class IndexServiceConnector
         } else {
             $url = $this->indexService . $this->indexServicePath . 'reindex';
         }
+        $_owApp = OntoWiki::getInstance();
+        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerReindexClass->indexName: ' . $indexName);
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_HEADER, 0);
         curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);

@@ -151,6 +151,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $params = $this->_request->getParams();
         $indexname = $params['indexname'];
         
+        $_owApp->logger->debug('Fulltextsearch deleteindexAction: deleting index: ' . $indexname);
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $response = $indexServiceConnector->triggerDeleteIndex($indexname);
         $indexServiceConnector->finish();

@@ -1,5 +1,5 @@
-$(document).ready(function() {
-    $('form[name=create-index]').submit(function(e) {
+$(document).ready(function () {
+    $('form[name=create-index]').submit(function (e) {
         e.preventDefault();
         $("#create-index-response").text('creating index ...');
         $.ajax({
@@ -7,13 +7,14 @@ $(document).ready(function() {
             cache: false,
             url: urlBase + 'fulltextsearch/createindex',
             data: $(this).serialize(),
-            success: function(msg) {
-                if (strStartsWith(msg, 'true')) {
-                    $("#create-index-response").text('OK ✔');
-                } else {
-                    $("#create-index-response").text(msg);
-                }
+            success: function (msg) {
+                $("#create-index-response").text('OK ✔');
                 location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $("#create-index-response").text(textStatus);
+            },
+            complete: function (jqXHR, textStatus) {
             }
         });
     });

@@ -210,7 +210,15 @@ class ElasticsearchHelper
             if ($resultSet['hits']['total'] == 0) {
                 $partialQuery = '';
                 foreach ($searchTerms as $term) {
-                    $partialQuery.= $term . "~ ";
+                    if ((strcmp($term, 'OR') !== 0)
+                        && (strcmp($term, 'AND') !== 0)
+                        && (strcmp($term, 'NOT') !== 0)
+                        && (strpos($term, '(') === 0)
+                        && (strpos($term, ')') === 0)) {
+                        $partialQuery.= $term . "~ ";
+                    } else {
+                        $partialQuery.= $term . " ";
+                    }
                 }
                 $query['body']['query']['query_string']['query'] = $partialQuery;
                 $resultSet = $this->getClient(static ::$_privateConfig)->search($query);

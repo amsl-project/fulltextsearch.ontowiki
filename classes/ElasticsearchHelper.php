@@ -213,8 +213,8 @@ class ElasticsearchHelper
                     if ((strcmp($term, 'OR') !== 0)
                         && (strcmp($term, 'AND') !== 0)
                         && (strcmp($term, 'NOT') !== 0)
-                        && (strpos($term, '(') === 0)
-                        && (strpos($term, ')') === 0)) {
+                        && (strpos($term, '(') !== 'FALSE')
+                        && (strpos($term, ')') !== 'FALSE')) {
                         $partialQuery.= $term . "~ ";
                     } else {
                         $partialQuery.= $term . " ";

@@ -41,6 +41,23 @@
             "http://purl.org/dc/terms/alternative",
             "http://www.w3.org/2006/vcard/ns#hasOrganizationName",
             "http://vocab.ub.uni-leipzig.de/bibrm/shortFaculty";
+    :classes "http://vocab.ub.uni-leipzig.de/bibrm/ContractItem",
+             "http://vocab.ub.uni-leipzig.de/bibrm/LicensePackage",
+             "http://xmlns.com/foaf/0.1/Organization",
+             "http://vocab.ub.uni-leipzig.de/bibrm/Budget",
+             "http://vocab.ub.uni-leipzig.de/bibrm/AnnualContractData",
+             "http://vocab.ub.uni-leipzig.de/bibrm/BasicContractData",
+             "http://xmlns.com/foaf/0.1";
+    :ignoredModels "http://www.openlinksw.com/schemas/virtrdf#",
+                   "http://localhost/OntoWiki/Config/",
+                   "http://ns.ontowiki.net/SysOnt/",
+                   "http://xmlns.com/foaf/0.1/",
+                   "http://amsl.technology/issn2zdb/",
+                   "http://amsl.technology/issn2faculties/",
+                   "http://vocab.ub.uni-leipzig.de/bibrm/",
+                   "http://amsl.technology/config/consortial/",
+                   "http://amsl.technology/config/erm/",
+                   "http://ubl.amsl.technology/config/erm/";
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "10";

@@ -11,8 +11,8 @@ function startsWith($haystack, $needle)
     return (substr($haystack, 0, $length) === $needle);
 }
 ?>
-<div class='twoColumn'>
-    <div class="width29 float margin">
+<!--<div class='twoColumn'>-->
+    <div id="indices">
         <h1>Available Indices</h1>
         <p>
             <a href='reindexclass'>full reindex</a>
@@ -26,32 +26,28 @@ function startsWith($haystack, $needle)
                 if (startsWith($key, ".")) {
                     break;
                 }
-                echo '<div class="messagebox indexBox">';
-                echo '<strong>' . $key . '</strong>';
-                echo ' : ' . $indices[$key]['docs']['num_docs'];
-                echo "<br>";
-                echo '<a href=reindexclass?indexname=' . $key .'>reindex</a>';
-                echo "<br>";
-                echo '<a href=deleteindex?indexname=' . $key .'>delete</a>';
-                echo "<br>";
+                echo '<div class="indexBox">';
+                echo '<div class="indexname">' . $key . '</div>';
+                echo '<div class="count"></div>';
+                echo '<div class="indexfooter"></div>';
                 echo "</div>";
             }
         ?>
     </div>
-    <div class="width69 float margin">
-        <h1>Create new Index</h1>
-        <form method="post" class="simple-input" name="create-index">
-            <fieldset>
-                <div>
-                    <input class="text focusNextOnEnter" id="indexname" name="indexname" value="" type="text">
-                    <input id="submit-create-index" type="submit" value="Create Index" class="submit"/>
-                    <span id='create-index-response'></span>
-                </div>
-            </fieldset>
-        </form>
-        <!-- <h1>Index Server Information</h1> -->
-    </div>
-</div>
+<!--    <div class="width69 float margin">-->
+<!--        <h1>Create new Index</h1>-->
+<!--        <form method="post" class="simple-input" name="create-index">-->
+<!--            <fieldset>-->
+<!--                <div>-->
+<!--                    <input class="text focusNextOnEnter" id="indexname" name="indexname" value="" type="text">-->
+<!--                    <input id="submit-create-index" type="submit" value="Create Index" class="submit"/>-->
+<!--                    <span id='create-index-response'></span>-->
+<!--                </div>-->
+<!--            </fieldset>-->
+<!--        </form>-->
+<!--        <!-- <h1>Index Server Information</h1> -->
+<!--    </div>-->
+<!--</div>-->
 <?php
 // echo prettyPrint($this->model->getPredicates())
 ?>

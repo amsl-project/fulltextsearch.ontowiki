@@ -55,8 +55,8 @@ class ElasticsearchHelper
          */
         $params = array();
         $params['hosts'] = array($config->fulltextsearch->hosts);
-        
         static ::$client = new Elasticsearch\Client($params);
+
     }
     
     /**
@@ -85,6 +85,27 @@ class ElasticsearchHelper
         $logger = OntoWiki::getInstance()->logger;
         $indices = $this->getClient(static ::$_privateConfig)->indices()->status();
         return $indices['indices'];
+    }
+
+    /**
+     * Retrieves different meta data from the index like count of documents per object type
+     * @param $indexname the name of the index (uri)
+     *
+     */
+    public function countObjects($indexname, $classname) {
+        if (isset($indexname) && isset($classname) && $this->indexExists(str_replace("/", "_", $indexname))){
+            $query['index'] = str_replace("/", "_", $indexname);
+            $query['body']['query']['filtered']['filter']['type']['value'] = $classname;
+            $return = $this->getClient(static ::$_privateConfig)->count($query);
+            $queryEncoded = json_encode($query);
+            return $return['count'];
+        }
+        return null;
+    }
+
+    public function indexExists($indexname) {
+        $indices = array_keys($this->getClient(static ::$_privateConfig)->indices()->getAliases());;
+        return in_array($indexname, $indices);
     }
     
     /**

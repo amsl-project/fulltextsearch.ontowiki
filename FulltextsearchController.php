@@ -115,19 +115,12 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $this->addModuleContext('main.window.fulltextsearch.info');
         $_owApp->getNavigation()->disableNavigation();
 
-        $allModels = Erfurt_App::getInstance()->getStore()->getAvailableModels($withHidden = true);
-        $ignoredModels = $this->_privateConfig->fulltextsearch->ignoredModels->toArray();
-
-        foreach ($ignoredModels as $model) {
-            if(array_key_exists ($model, $allModels)){
-                unset($allModels[$model]);
-            }
-        }
+        $models = $this->getIndexableModels();
 
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         $indices = $esHelper->getAvailableIndicesWithMetadata();
-        $this->view->indices = $allModels;
-        $this->view->models = $allModels;
+        $this->view->indices = $models;
+        $this->view->models = $models;
     }
 
     /**
@@ -168,12 +161,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
 
         $params = $this->_request->getParams();
         $indexname = $params['indexname'];
-
-//        if (isset($params['classname'])) {
-//            $classname = $params['classname'];
-//        } else {
-//            $classname = "no class";
-//        }
 
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         $metadata = array();
@@ -229,9 +216,13 @@ class FulltextsearchController extends OntoWiki_Controller_Component
             $indexname = null;
         }
 
+        $classes = $this->_privateConfig->fulltextsearch->classes->toArray();
+
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $response = $indexServiceConnector->triggerReindexClass($indexname);
         $indexServiceConnector->finish();
+
+
         $url = OntoWiki::getInstance()->getUrlBase() . 'fulltextsearch/info';
 
         if ($response === 'true') {
@@ -241,5 +232,24 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         }
 
 
+    }
+
+    /**
+     * @return array
+     * @throws Erfurt_Exception
+     * @throws Erfurt_Store_Exception
+     * @throws Exception
+     */
+    public function getIndexableModels()
+    {
+        $allModels = Erfurt_App::getInstance()->getStore()->getAvailableModels($withHidden = true);
+        $ignoredModels = $this->_privateConfig->fulltextsearch->ignoredModels->toArray();
+
+        foreach ($ignoredModels as $model) {
+            if (array_key_exists($model, $allModels)) {
+                unset($allModels[$model]);
+            }
+        }
+        return $allModels;
     }
 }

@@ -7,8 +7,6 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 
-// require '../extensions/fulltextsearch/libraries/vendor/autoload.php';
-// require realpath(dirname(__FILE__)) . '/libraries/vendor/autoload.php';
 require realpath(dirname(__FILE__)) . '/../libraries/vendor/autoload.php';
 
 // require 'vendor/autoload.php';

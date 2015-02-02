@@ -64,7 +64,11 @@ function retrieveCount(indexname, classname) {
 }
 
 function reindex(indexname) {
-    alert(indexname);
+    $.ajax({
+        url: urlBase + 'fulltextsearch/reindex',
+        data: {indexname: indexname},
+        async: false
+    });
 }
 
 function deleteIndex(indexname) {

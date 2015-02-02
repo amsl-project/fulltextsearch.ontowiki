@@ -1,6 +1,5 @@
 {
     "require": {
-        "elasticsearch/elasticsearch": "~1.0",
-        "nategood/httpful": "*"
+        "elasticsearch/elasticsearch": "~1.0"
     }
 }

@@ -11,12 +11,13 @@ function startsWith($haystack, $needle)
     return (substr($haystack, 0, $length) === $needle);
 }
 ?>
+
 <!--<div class='twoColumn'>-->
     <div id="indices">
-        <h1>Available Indices</h1>
-        <p>
+        <h1>Available Indices<span id="loader"></span></h1>
+        <div id="loader-container">
             <a href='reindexclass'>full reindex</a>
-        </p>
+        </div>
         <?php
             $indices = $this->indices;
             $keys = array_keys($indices);
@@ -51,3 +52,8 @@ function startsWith($haystack, $needle)
 <?php
 // echo prettyPrint($this->model->getPredicates())
 ?>
+<div class="hidden-dialog">
+    <div id="dialog-confirm" title="Delete Index?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This removes all documents from the Index</p>
+    </div>
+</div>

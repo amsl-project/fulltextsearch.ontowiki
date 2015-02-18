@@ -1,78 +1,119 @@
 $(document).ready(function () {
-    $('form[name=create-index]').submit(function (e) {
-        e.preventDefault();
-        $("#create-index-response").text('creating index ...');
-        $.ajax({
-            type: 'POST',
-            cache: false,
-            url: urlBase + 'fulltextsearch/createindex',
-            data: $(this).serialize(),
-            success: function (msg) {
-                $("#create-index-response").text('OK ✔');
-                location.reload();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $("#create-index-response").text(textStatus);
-            },
-            complete: function (jqXHR, textStatus) {
-            }
-        });
-    });
+
+    var loader = new CanvasLoader('loader');
+    loader.setColor('#cf5300');
+    loader.setDiameter(30);
+    loader.show();
 
     $('.indexBox').each(function () {
         var indexname = $('.indexname', this).text();
-        var count = jQuery.parseJSON(retrieveCount(indexname, 'http://vocab.ub.uni-leipzig.de/bibrm/Budget'));
         var countDiv = $('.count', this);
-
-        // transforming the result into html containers
-        var newHTML = [];
-        $.each(count, function (classname, countValue) {
-            newHTML.push('<div class="class-count-container">');
-            newHTML.push('<div class="class-count-container-headline">');
-            newHTML.push(classname);
-            newHTML.push('</div><div class="class-count-container-content">count: <strong>');
-            newHTML.push(countValue);
-            newHTML.push('</strong></div></div>')
+        var indexBox = $(this);
+        $.ajax({
+            url: urlBase + 'fulltextsearch/countobjects',
+            data: {indexname: indexname},
+            dataType: 'json',
+            success: function (count) {
+                countDiv.html(buildString(count));
+                indexBox.fadeIn({
+                    duration: 300,
+                    easing: 'easeInOutQuad'
+                })
+            }
         });
 
-        countDiv.html(newHTML.join(""));
-
-        $('.indexfooter', this).html('<a id="reindex">reindex</a> or <a id="delete">delete</a>');
+        $('.indexfooter', this).html('<a id="refresh">refresh view</a>, <a id="reindex">reindex</a> or <a id="delete">delete</a>');
 
         $('#reindex', this).click(function () {
-            reindex(indexname);
+            reindex(indexname, countDiv, loader);
         });
 
         $('#delete', this).click(function () {
-            deleteIndex(indexname);
+            deleteIndex(indexname, countDiv, loader);
+        });
+
+        $('#refresh', this).click(function () {
+            refreshView(indexname, countDiv, loader);
         });
 
     });
+
+    // hide loader when all request have finished
+    $(document).ajaxStop(function() {
+        loader.hide();
+    });
 });
 
-function strStartsWith(str, prefix) {
-    return str.indexOf(prefix) === 0;
-}
+function reindex(indexname, indexbox, loader) {
 
-
-function retrieveCount(indexname, classname) {
-    return $.ajax({
-        url: urlBase + 'fulltextsearch/countobjects',
-        data: {indexname: indexname, classname: classname},
-        async: false
-    }).responseText;
-}
-
-function reindex(indexname) {
     $.ajax({
         url: urlBase + 'fulltextsearch/reindex',
         data: {indexname: indexname},
-        async: false
+        beforeSend: function () {
+            loader.show();
+        }
+    });
+    refreshView(indexname, indexbox, loader);
+}
+
+function refreshView(indexname, indexBox, loader) {
+
+    $.ajax({
+        url: urlBase + 'fulltextsearch/countobjects',
+        data: {indexname: indexname},
+        dataType: 'json',
+        beforeSend: function () {
+            loader.show(); // Hidden by default
+            indexBox.css('color', 'lightgray');
+        },
+        success: function (count) {
+            indexBox.html(buildString(count));
+            indexBox.css('color', 'black');
+            loader.hide();
+        }
     });
 }
 
-function deleteIndex(indexname) {
-    alert(indexname);
+// transforms the result json to a html div container
+function buildString(result) {
+    var newHTML = [];
+    $.each(result, function (classname, countValue) {
+        newHTML.push('<div class="class-count-container">');
+        newHTML.push('<div class="class-count-container-headline">');
+        newHTML.push(classname);
+        newHTML.push('</div><div class="class-count-container-content">count: <strong>');
+        newHTML.push(countValue);
+        newHTML.push('</strong></div></div>')
+    });
+    return newHTML.join("");
 }
+
+function deleteIndex(indexname, indexbox, loader) {
+    loader.show();
+
+    $( "#dialog-confirm" ).dialog({
+        resizable: false,
+        modal: true,
+        buttons: {
+            "Delete": function() {
+                $( this ).dialog( "close" );
+                $.ajax({
+                    url: urlBase + 'fulltextsearch/deleteIndex',
+                    data: {indexname: indexname},
+                    success: function (result) {
+                        console.log(result);
+                        refreshView(indexname, indexbox, loader);
+                    }
+                });
+            },
+            Cancel: function() {
+                $( this ).dialog( "close" );
+                loader.hide();
+            }
+        }
+    });
+
+}
+
 
 

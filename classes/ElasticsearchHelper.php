@@ -115,14 +115,14 @@ class ElasticsearchHelper
      */
     public function search($searchTerm) {
         
-        $logger = OntoWiki::getInstance()->logger;
+        $logger = OntoWiki::getInstance()->getCustomLogger('fulltextsearch');
         
         $index = static ::$_privateConfig->fulltextsearch->index;
         $defaultOperator = static ::$_privateConfig->fulltextsearch->defaultOperator;
         $fields = static ::$_privateConfig->fulltextsearch->fields->toArray();
         $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
         
-        $logger->info('fulltextsearch: searching for ' . $searchTerm);
+        $logger->debug('fulltextsearch: searching for ' . $searchTerm);
         
         // $query['index'] = $index;
         if (isset($searchTerm)) {
@@ -146,12 +146,13 @@ class ElasticsearchHelper
             
             $logger->info('elasticsearch query:' . print_r(($query), true));
             $fullResults = $this->getClient(static ::$_privateConfig)->search($query);
-            
-            $results = array();
-            
+
             $logger->info('fullresult:' . print_r(($fullResults), true));
             $highlightCount = 0;
             foreach ($fullResults['hits']['hits'] as $hit) {
+                if($hit['_type'] == 'indexsettings') {
+                    continue;
+                }
                 if (isset($hit['highlight'])) {
                     $highlight = $hit['highlight'];
                     $highlightValues[] = array_values($highlight);
@@ -172,6 +173,7 @@ class ElasticsearchHelper
                     
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => $highlightValue, 'highlightKey' => $highlightKey, 'originIndex' => $originIndex);
                 } else {
+                    $title = $hit['_source']['@id'];
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => '');
                 }
                 $highlightCount++;

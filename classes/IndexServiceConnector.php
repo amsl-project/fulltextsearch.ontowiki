@@ -110,76 +110,47 @@ class IndexServiceConnector
         return $response;
     }
 
-    public function triggerDeleteIndex($indexName)
+    /**
+     * Delets an index and all of its documents.
+     *
+     * @param $indexname
+     * @return Requests_Response
+     */
+    public function triggerDeleteIndex($indexname)
     {
-        $url = $this->indexService . $this->indexServicePath . 'delete?index=' . $indexName;
+        $url = 'http://' . $this->indexService . $this->indexServicePath . 'delete';
         $_owApp = OntoWiki::getInstance();
         $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerDeleteIndex->url: ' . $url);
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        curl_setopt($this->curl, CURLOPT_HEADER, 0);
-        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
-        $response = curl_exec($this->curl);
+
+        $data = array('index' => $indexname);
+        $response = Requests::request($url, array(), $data, Requests::DELETE);
         return $response;
     }
 
-//    public function triggerReindexClass($indexName = null)
-//    {
-//        if ($indexName !== null) {
-//            $url = $this->indexService . $this->indexServicePath . 'reindex?index=' . $indexName;
-//        } else {
-//            $url = $this->indexService . $this->indexServicePath . 'reindex';
-//        }
-//        $_owApp = OntoWiki::getInstance();
-//        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerReindexClass->indexName: ' . $indexName);
-//        curl_setopt($this->curl, CURLOPT_URL, $url);
-//        curl_setopt($this->curl, CURLOPT_HEADER, 0);
-//        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
-//        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-//        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
-//        OntoWiki::getInstance()->logger->info('triggerReindexClass: ' . $url);
-//        $response = curl_exec($this->curl);
-//        return $response;
-//    }
-
-
+    /**
+     * Reindexes an existing index
+     *
+     * @param $indexname
+     * @return array
+     */
     public function triggerReindexClass($indexname)
     {
         $_owApp = OntoWiki::getInstance();
-        $logger = $_owApp->logger;
+        $logger = $_owApp->getCustomLogger('fulltextsearch');
 
         $logger->debug('triggerReindexClass: ' . $indexname);
-//        $url = 'http://' . $this->indexService . $this->indexServicePath . 'reindex?indexname=' . $indexname;
+
         $url = 'http://' . $this->indexService . $this->indexServicePath . 'reindex';
 
-        $client = new \Guzzle\Http\Client();
-
-//        $response = $client->get($url);
-//        $logger->debug('url:' . $url);
-//        $request = $client->createRequest('GET', $url);
-//        $request->setPort('8080');
-//        $response = $client->send($request);
+        // getting the predefined classes from the config file
         $classes = $this->privateConfig->fulltextsearch->classes->toArray();
+        $logger->debug('triggerReindexClass classes: ' . print_r($classes, true));
+        $logger->debug('url: ' . $url);
 
-        $request = $client->createRequest('POST', $url);
-        $postBody = $request->getBody();
-
-        $postBody->setField('indexname', $indexname);
-        $postBody->setField('classes', $classes);
-
-        $response = $client->send($request);
-
-        $logger->debug('triggerReindexClass:response: ' . $response);
-
-
+        $headers = array('Content-Type' => 'application/json');
+        $data = array('index' => $indexname, 'classes' => $classes) ;
+        $response = Requests::post($url, $headers, json_encode($data));
         return $response;
-
-
-//        $_owApp = OntoWiki::getInstance();
-//        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerReindexClass');
-
     }
 
 

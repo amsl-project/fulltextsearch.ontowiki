@@ -167,6 +167,7 @@
     -moz-transition: background .218s;
     -o-transition: backgroun .218s;
     transition: background .218s;
+    display: none;
 }
 
 .indexBox:hover {
@@ -236,4 +237,19 @@
 .indexfooter {
     text-align: right;
     padding: 5px;
+}
+
+#loader-container {
+
+}
+
+#loader {
+    position: fixed; /* or absolute */
+    top: 15px;
+    left: 50%;
+    z-index: 1000000;
+}
+
+.hidden-dialog {
+    display: none;
 }

@@ -192,12 +192,12 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $indexServiceConnector->finish();
         $this->_response->setHeader('Content-Type', 'text/html');
         $this->_response->setBody($response);
-        $url = OntoWiki::getInstance()->getUrlBase() . 'fulltextsearch/info';
-        if ($response === 'true') {
-            $this->_redirect($url, array('code' => 302));
-        } else {
-            $this->_redirect($url, array('code' => 500));
-        }
+//        $url = OntoWiki::getInstance()->getUrlBase() . 'fulltextsearch/info';
+//        if ($response === 'true') {
+//            $this->_redirect($url, array('code' => 302));
+//        } else {
+//            $this->_redirect($url, array('code' => 500));
+//        }
     }
 
     public function reindexAction()
@@ -217,23 +217,12 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         }
 
         $logger->debug('reindex action: ' . $indexname);
-        $classes = $this->_privateConfig->fulltextsearch->classes->toArray();
 
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $response = $indexServiceConnector->triggerReindexClass($indexname);
         $indexServiceConnector->finish();
 
-        $this->_response->setBody($response);
-
-//        $url = OntoWiki::getInstance()->getUrlBase() . 'fulltextsearch/info';
-//
-//        if ($response === 'true') {
-//            $this->_redirect($url, array('code' => 302));
-//        } else {
-//            $this->_redirect($url, array('code' => 500));
-//        }
-
-
+        $this->_response->setBody($response->body);
     }
 
     /**

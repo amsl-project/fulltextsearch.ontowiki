@@ -1,11 +1,26 @@
 $(document).ready(function () {
 
-    var loader = new CanvasLoader('loader');
-    loader.setColor('#cf5300');
-    loader.setDiameter(30);
-    loader.show();
+    // Whenever an Ajax request is about to be sent, show the loader
+    $( document ).ajaxStart(function() {
+        //loader.show();
+        NProgress.start();
+    });
+    // hide loader when all request have finished
+    $(document).ajaxStop(function() {
+        //loader.hide();
+        NProgress.done();
+    });
 
-    $('.indexBox').each(function () {
+    /**
+     *  Filling the indexboxes with content
+     */
+    var indexBoxes = $('.indexBox');
+    var numberOfIndexBoxes = indexBoxes.length;
+    if (numberOfIndexBoxes > 0) {
+        NProgress.configure({ trickle: false }); // disable auto increment of progressbar
+    }
+
+    indexBoxes.each(function () {
         var indexname = $('.indexname', this).text();
         var countDiv = $('.count', this);
         var indexBox = $(this);
@@ -15,6 +30,7 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (count) {
                 countDiv.html(buildString(count));
+                NProgress.inc((1 / numberOfIndexBoxes) * 0.75); // inc progressbar
                 indexBox.fadeIn({
                     duration: 300,
                     easing: 'easeInOutQuad'
@@ -25,51 +41,42 @@ $(document).ready(function () {
         $('.indexfooter', this).html('<a id="refresh">refresh view</a>, <a id="reindex">reindex</a> or <a id="delete">delete</a>');
 
         $('#reindex', this).click(function () {
-            reindex(indexname, countDiv, loader);
+            reindex(indexname, countDiv);
         });
 
         $('#delete', this).click(function () {
-            deleteIndex(indexname, countDiv, loader);
+            deleteIndex(indexname, countDiv);
         });
 
         $('#refresh', this).click(function () {
-            refreshView(indexname, countDiv, loader);
+            refreshView(indexname, countDiv);
         });
 
     });
 
-    // hide loader when all request have finished
-    $(document).ajaxStop(function() {
-        loader.hide();
-    });
 });
 
-function reindex(indexname, indexbox, loader) {
+function reindex(indexname, indexbox) {
 
     $.ajax({
         url: urlBase + 'fulltextsearch/reindex',
-        data: {indexname: indexname},
-        beforeSend: function () {
-            loader.show();
-        }
+        data: {indexname: indexname}
     });
-    refreshView(indexname, indexbox, loader);
+    refreshView(indexname, indexbox);
 }
 
-function refreshView(indexname, indexBox, loader) {
+function refreshView(indexname, indexBox) {
 
     $.ajax({
         url: urlBase + 'fulltextsearch/countobjects',
         data: {indexname: indexname},
         dataType: 'json',
         beforeSend: function () {
-            loader.show(); // Hidden by default
             indexBox.css('color', 'lightgray');
         },
         success: function (count) {
             indexBox.html(buildString(count));
             indexBox.css('color', 'black');
-            loader.hide();
         }
     });
 }
@@ -88,9 +95,7 @@ function buildString(result) {
     return newHTML.join("");
 }
 
-function deleteIndex(indexname, indexbox, loader) {
-    loader.show();
-
+function deleteIndex(indexname, indexbox) {
     $( "#dialog-confirm" ).dialog({
         resizable: false,
         modal: true,
@@ -102,13 +107,12 @@ function deleteIndex(indexname, indexbox, loader) {
                     data: {indexname: indexname},
                     success: function (result) {
                         console.log(result);
-                        refreshView(indexname, indexbox, loader);
+                        refreshView(indexname, indexbox);
                     }
                 });
             },
             Cancel: function() {
                 $( this ).dialog( "close" );
-                loader.hide();
             }
         }
     });

@@ -53,10 +53,11 @@ titles.initialize();
  * the new class typeahead is added.
  */
 $(document).ready(function() {
-    $('#searchtext-input').off().unbind().addClass('typeahead');
+    var input = $('#searchtext-input');
+    input.off().unbind().addClass('typeahead');
     // dynamically set input value to value of search text. 
     // This is needed to search for input if enter was pressed.
-    $("#searchtext-input").on("input", function() {
+    input.on("input", function() {
         input = $('#searchtext-input').val();
         $("#actual-input").text(input);
     });
@@ -91,7 +92,7 @@ $(document).ready(function() {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
                 window.location = urlBase + 'fulltextsearch/search?input=' + input + '&from=0';
-            };
+            }
         });
     });
     // hide inner labels on click

@@ -123,19 +123,22 @@ class ElasticsearchHelper
         $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
         
         $logger->debug('fulltextsearch: searching for ' . $searchTerm);
-        
-        // $query['index'] = $index;
+
         if (isset($searchTerm)) {
             $searchTerms = explode(" ", $searchTerm);
-            
+
             $partialQuery = '';
             foreach ($searchTerms as $term) {
                 $partialQuery.= $term . "* ";
             }
+            $searchableIndices = $this->getSearchableIndices();
+            $query['index'] = $searchableIndices;
+//            $query['index'] = array("http:__ubl.amsl.technology_erm_", "http:__amsl.technology_consortial_");
+
             $query['body']['query']['query_string']['query'] = $partialQuery;
             $query['body']['query']['query_string']['fields'] = $fields;
             $query['body']['query']['query_string']['default_operator'] = $defaultOperator;
-            
+
             $highlightFields = array();
             foreach ($fields as $field) {
                 $field = $this->removeBoostingOperator($field);
@@ -274,5 +277,34 @@ class ElasticsearchHelper
         } else {
             return substr($field, 0, $pos);
         }
+    }
+
+    /**
+     * @return array
+     * @throws Erfurt_Exception
+     * @throws Erfurt_Store_Exception
+     * @throws Exception
+     */
+    public function getSearchableIndices()
+    {
+        $_erfurt = Erfurt_App::getInstance();
+        $ac = $_erfurt->getAc();
+
+        // get all accessible models for the current user
+        $models = $_erfurt->getStore()->getAvailableModels($withHidden = true);
+
+        // get all available indices
+        $availableIndices = $this->getAvailableIndices();
+
+        // remove not accessible indices from list of available indices
+        $indexnames = array();
+        foreach ($models as $model) {
+            $indexname = str_replace("/", "_", $model['modelIri']);
+            if (in_array($indexname, $availableIndices)){
+                $indexnames[] = $indexname;
+            }
+        }
+
+        return $indexnames;
     }
 }

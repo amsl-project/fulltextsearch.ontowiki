@@ -204,6 +204,9 @@ class ElasticsearchHelper
         // if no index was specified ignore the parameter "index" to search all indices
         if ($indices !== '') {
             $query['index'] = $indices;
+        } else {
+            $searchableIndices = $this->getSearchableIndices();
+            $query['index'] = $searchableIndices;
         }
         if (isset($searchTerm)) {
             $searchTerms = explode(" ", $searchTerm);

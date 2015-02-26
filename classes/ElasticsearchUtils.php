@@ -26,6 +26,7 @@ class ElasticsearchUtils
 
             $extract['highlight'] = $hit['highlight'];
             $extract['index'] = $hit['_index'];
+            $extract['type'] = $hit['_type'];
             array_push($extractedResults, $extract);
         }
 

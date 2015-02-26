@@ -10,17 +10,18 @@ function prettyPrint($a) {
 <div id="show-filter"><a id="show-filter-btn" class="minibutton"><?php echo $this->_('Show filter') ?></a></div>
 <!-- The list of filters -->
 <div id="filter-list" style="display: none">
+    <h4><?php echo $this->_('Knowledgebase') ?></h4>
     <?php foreach ($this->availableIndices as $index) :?>
     <?php if((in_array($index, $this->selectedIndices))): ?>
     <div>
         <label class="checkboxradio">
-            <input class="checkbox" type="checkbox"  value="<?php echo $index; ?>" checked><?php echo $index; ?>
+            <input class="checkbox" type="checkbox"  value="<?php echo $index; ?>" checked><?php echo str_replace("_", "/", $index); ?>
         </label>
     </div>
     <?php else: ?>
     <div>
         <label class="checkboxradio">
-            <input class="checkbox" type="checkbox" value="<?php echo $index; ?>"><?php echo $index; ?>
+            <input class="checkbox" type="checkbox" value="<?php echo $index; ?>"><?php echo str_replace("_", "/", $index); ?>
         </label>
     </div>
     <?php endif; ?>
@@ -36,8 +37,9 @@ function prettyPrint($a) {
         <tr class="odd">
             <!-- <th><?php echo $this->_('select'); ?>          </th> -->
             <th><?php echo $this->_('Resource') ?></th>
-            <th><?php echo $this->_('Label') ?></th>
+<!--            <th>--><?php //echo $this->_('Label') ?><!--</th>-->
             <th><?php echo $this->_('Highlight') ?></th>
+            <th><?php echo $this->_('Knowledgebase') ?></th>
             <th><?php echo $this->_('Class') ?></th>
         </tr>
     </thead>
@@ -47,13 +49,14 @@ function prettyPrint($a) {
         <?php foreach ($this->resultArray as $result) :?>
         <tr class="<?php echo $odd ? 'odd' : 'even'; $odd = !$odd; ?> ">
             <td><a href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>resource/properties?r=<?php echo $result['id']; ?>"><?php echo $result['id']; ?></a></td>
-            <td><?php if (is_array($result['title'])) {echo $result['title'][0];} else {echo $result['title'];} ?></td>
+<!--            <td>--><?php //if (is_array($result['title'])) {echo $result['title'][0];} else {echo $result['title'];} ?><!--</td>-->
             <td>
                 <span class="hint--bottom" data-hint="<?php echo array_keys($result['highlight'])[0] ?>">
                 <?php echo array_values(array_values($result['highlight'])[0])[0]; ?>
                 </span>
             </td>
-            <td><?php echo $result['index']; ?></td>
+            <td><?php echo str_replace("_", "/", $result['index']); ?></td>
+            <td><?php echo $result['type']; ?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>

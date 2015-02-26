@@ -65,6 +65,9 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $this->_response->setBody(json_encode($result));
     }
 
+    /**
+     *
+     */
     public function searchAction()
     {
         OntoWiki::getInstance()->logger->info('searchAction');
@@ -88,7 +91,8 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $result = $esHelper->searchAndReturnEverything($input, $indices, $from);
         $this->view->jsonResult = $result['resultSet'];
 
-        $this->view->availableIndices = $esHelper->getAvailableIndices();
+//        $this->view->availableIndices = $esHelper->getAvailableIndices();
+        $this->view->availableIndices = $esHelper->getSearchableIndices();
 
         // transform comma separated indices to array
         $this->view->selectedIndices = str_getcsv($indices);

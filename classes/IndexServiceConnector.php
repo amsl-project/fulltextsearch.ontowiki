@@ -43,22 +43,18 @@ class IndexServiceConnector
      * @param  [type] $resourceUri
      * @return [type]
      */
-    public function triggerReindex($resourceUri, $classUri = null)
+    public function triggerReindex($resourceUri, $model, $class)
     {
-        if ($classUri === null) {
-            $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
-        } else {
-            $classQname = OntoWiki_Utils::compactUri($classUri);
-            $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri . '&index=' . $classQname . '&objectType=' . $classQname;
-        }
+        $url = 'http://' . $this->indexService . $this->indexServicePath . 'uri';
+
+//            $classQname = OntoWiki_Utils::compactUri($classUri);
+        $data = array('resourceUri' => $resourceUri, 'index' => $model, 'objectType' => $class, 'graphUri' => $model);
         $_owApp = OntoWiki::getInstance();
-        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerDeleteResource reindexing resource: ' . $resourceUri);
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_HEADER, 0);
-        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
-        return curl_exec($this->curl);
+        $_owApp->getCustomLogger('fulltextsearch')->debug('Fulltextsearch->IndexServiceConnector->triggerReindex reindexing resource: ' . $resourceUri);
+        $response = Requests::request($url, array(), $data, Requests::GET);
+
+        return $response;
+
     }
 
 
@@ -66,18 +62,25 @@ class IndexServiceConnector
      * Triggers an event that deletes a resource with the given resource URI.
      * @param  [type] $resourceUri
      */
-    public function triggerDeleteResource($resourceUri)
+    public function triggerDeleteResource($resourceUri, $model)
     {
-        $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
+        $url = 'http://' . $this->indexService . $this->indexServicePath . 'uri';
+
+//        $url = $this->indexService . $this->indexServicePath . 'uri?resourceUri=' . $resourceUri;
         $_owApp = OntoWiki::getInstance();
-        $_owApp->logger->debug('Fulltextsearch->IndexServiceConnector->triggerDeleteResource deleting resource: ' . $resourceUri);
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        curl_setopt($this->curl, CURLOPT_HEADER, 0);
-        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
-        curl_exec($this->curl);
+        $_owApp->getCustomLogger('fulltextsearch')->debug('Fulltextsearch->IndexServiceConnector->triggerDeleteResource deleting resource: ' . $resourceUri);
+        $data = array('resourceUri' => $resourceUri, 'graphUri' => $model);
+        $response = Requests::request($url, array(), $data, Requests::DELETE);
+
+        return $response;
+
+//        curl_setopt($this->curl, CURLOPT_URL, $url);
+//        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+//        curl_setopt($this->curl, CURLOPT_HEADER, 0);
+//        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
+//        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
+//        curl_setopt($this->curl, CURLOPT_TIMEOUT, 30);
+//        curl_exec($this->curl);
     }
 
     /**

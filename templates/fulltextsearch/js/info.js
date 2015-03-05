@@ -1,63 +1,84 @@
 $(document).ready(function () {
 
+    var pathname = window.location.pathname;
+
     // Whenever an Ajax request is about to be sent, show the loader
-    $( document ).ajaxStart(function() {
+    $(document).ajaxStart(function () {
         //loader.show();
         NProgress.start();
     });
     // hide loader when all request have finished
-    $(document).ajaxStop(function() {
+    $(document).ajaxStop(function () {
         //loader.hide();
         NProgress.done();
     });
 
-    /**
-     *  Filling the indexboxes with content
-     */
-    var indexBoxes = $('.indexBox');
-    var numberOfIndexBoxes = indexBoxes.length;
-    if (numberOfIndexBoxes > 0) {
-        NProgress.configure({ trickle: false }); // disable auto increment of progressbar
-    }
+    // make sure we are in the right controller
+    if (pathname == "/OntoWiki/fulltextsearch/info") {
 
-    indexBoxes.each(function () {
-        var indexname = $('.indexname', this).text();
-        var countDiv = $('.count', this);
-        var indexBox = $(this);
+        var $indices = $('#indices');
+
+        // initialize grid layout with masonry
+        $indices.masonry({
+            columnWidth: 400,
+            itemSelector: '.indexBox',
+            transitionDuration: '0.2s',
+            "gutter": 10,
+            visibleStyle: {opacity: 1},
+            hiddenStyle: {opacity: 0}
+        });
+
         $.ajax({
-            url: urlBase + 'fulltextsearch/countobjects',
-            data: {indexname: indexname},
+            url: urlBase + 'fulltextsearch/availableindices',
             dataType: 'json',
-            success: function (count) {
-                countDiv.html(buildString(count));
-                NProgress.inc((1 / numberOfIndexBoxes) * 0.75); // inc progressbar
-                indexBox.fadeIn({
-                    duration: 300,
-                    easing: 'easeInOutQuad'
-                })
+            success: function (models) {
+                console.log(models);
+
+
+                $.each(models, function (indexname, value) {
+                    var countDiv;
+                    $.ajax({
+                        url: urlBase + 'fulltextsearch/countobjects',
+                        data: {indexname: indexname},
+                        dataType: 'json',
+                        success: function (count) {
+
+                            var indexBox = $('<div class="indexBox"><div class="indexname">'
+                            + indexname
+                            + '</div><div class="count">'
+                            + buildString(count)
+                            + '</div><div class="indexfooter">'
+                            + '<a id="refresh">refresh view</a>, <a id="reindex">reindex</a> or <a id="delete">delete</a>'
+                            + '</div></div>');
+
+                            //countDiv.html(buildString(count));
+                            NProgress.inc((1 / Object.keys(models).length) * 0.75); // inc progressbar
+                            $indices.append(indexBox).masonry('appended', indexBox);
+
+                            countDiv = indexBox.find(".count");
+
+                            indexBox.find("#reindex").click(function () {
+                                reindex(indexname, countDiv);
+                            });
+
+                            indexBox.find("#delete").click(function () {
+                                deleteIndex(indexname, countDiv);
+                            });
+
+                            indexBox.find("#refresh").click(function () {
+                                refreshView(indexname, countDiv);
+                            });
+                        }
+                    });
+                });
             }
         });
-
-        $('.indexfooter', this).html('<a id="refresh">refresh view</a>, <a id="reindex">reindex</a> or <a id="delete">delete</a>');
-
-        $('#reindex', this).click(function () {
-            reindex(indexname, countDiv);
-        });
-
-        $('#delete', this).click(function () {
-            deleteIndex(indexname, countDiv);
-        });
-
-        $('#refresh', this).click(function () {
-            refreshView(indexname, countDiv);
-        });
-
-    });
-
+    }
 });
 
-function reindex(indexname, indexbox) {
 
+
+function reindex(indexname, indexbox) {
     $.ajax({
         url: urlBase + 'fulltextsearch/reindex',
         data: {indexname: indexname}
@@ -96,23 +117,22 @@ function buildString(result) {
 }
 
 function deleteIndex(indexname, indexbox) {
-    $( "#dialog-confirm" ).dialog({
+    $("#dialog-confirm").dialog({
         resizable: false,
         modal: true,
         buttons: {
-            "Delete": function() {
-                $( this ).dialog( "close" );
+            "Delete": function () {
+                $(this).dialog("close");
                 $.ajax({
                     url: urlBase + 'fulltextsearch/deleteIndex',
                     data: {indexname: indexname},
                     success: function (result) {
-                        console.log(result);
                         refreshView(indexname, indexbox);
                     }
                 });
             },
-            Cancel: function() {
-                $( this ).dialog( "close" );
+            Cancel: function () {
+                $(this).dialog("close");
             }
         }
     });

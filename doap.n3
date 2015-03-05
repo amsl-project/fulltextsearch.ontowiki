@@ -57,12 +57,35 @@
                    "http://vocab.ub.uni-leipzig.de/bibrm/",
                    "http://amsl.technology/config/consortial/",
                    "http://amsl.technology/config/erm/",
-                   "http://ubl.amsl.technology/config/erm/";
+                   "http://ubl.amsl.technology/config/erm/",
+                   "http://vocab.ub.uni-leipzig.de/amslTerms/";
+
+    :directAccessModels "http://vocab.ub.uni-leipzig.de/amsl/",
+                        "http://amsl.technology/templates/";
+
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "specificconfigurations";
+
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "amslVocab";
+            :uri     "http://vocab.ub.uni-leipzig.de/amsl/";
+            :classes "http://vocab.ub.uni-leipzig.de/amsl/AcqNote",
+                     "http://vocab.ub.uni-leipzig.de/amsl/ERStatus",
+                     "http://vocab.ub.uni-leipzig.de/amsl/LicenseType",
+                     "http://vocab.ub.uni-leipzig.de/amsl/OrganizationType",
+                     "http://www.w3.org/2000/01/rdf-schema#Class";
+        ];
+
+    ];
+
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "10";
     :indexService "172.18.113.206:8080";
     :indexServicePath "/erm/index/";
+
 ] ;
   doap:release :v1-0 .
 :v1-0 a doap:Version ;

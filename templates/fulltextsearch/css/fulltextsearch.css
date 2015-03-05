@@ -158,16 +158,19 @@
     float: left;
 }
 
+.indices {
+}
+
 .indexBox {
     text-align: left;
-    float: left;
-    margin: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     border: 1px solid #6B6B6B;
     -webkit-transition: background .218s;
     -moz-transition: background .218s;
     -o-transition: backgroun .218s;
     transition: background .218s;
-    display: none;
+    width: 380px;
 }
 
 .indexBox:hover {

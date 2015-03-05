@@ -146,9 +146,18 @@ class IndexServiceConnector
         $url = 'http://' . $this->indexService . $this->indexServicePath . 'reindex';
 
         // getting the predefined classes from the config file
-        $classes = $this->privateConfig->fulltextsearch->classes->toArray();
-        $logger->debug('triggerReindexClass classes: ' . print_r($classes, true));
-        $logger->debug('url: ' . $url);
+        $specificConfigurations = $this->privateConfig->fulltextsearch->specificconfigurations->toArray();
+
+        if ($key = ElasticsearchUtils::recursiveArraySearch($indexname, $specificConfigurations)){
+            $classes = $specificConfigurations[$key]['classes'];
+        } else {
+            $classes = $this->privateConfig->fulltextsearch->classes->toArray();
+        }
+
+        if (!is_array($classes)) {
+            $tmp = $classes;
+            $classes = explode(" ", $tmp);;
+        }
 
         $headers = array('Content-Type' => 'application/json');
         $data = array('index' => $indexname, 'classes' => $classes) ;

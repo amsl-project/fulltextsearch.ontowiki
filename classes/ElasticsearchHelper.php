@@ -93,7 +93,7 @@ class ElasticsearchHelper
     public function countObjects($indexname, $classname) {
         if (isset($indexname) && isset($classname) && $this->indexExists(str_replace("/", "_", $indexname))){
             $query['index'] = str_replace("/", "_", $indexname);
-            $query['body']['query']['filtered']['filter']['type']['value'] = $classname;
+            $query['body']['query']['filtered']['filter']['type']['value'] = str_replace("#", "//", $classname);
             $return = $this->getClient(static ::$_privateConfig)->count($query);
             $queryEncoded = json_encode($query);
             return $return['count'];
@@ -162,7 +162,7 @@ class ElasticsearchHelper
                     $highlightKeys[] = array_keys($highlight);
                     $highlightValue = $highlightValues[$highlightCount];
                     $highlightKey = $highlightKeys[$highlightCount];
-                    $originIndex = $hit['_index'];
+                    $originIndex = str_replace("_", "/", $hit['_index']);
                     
                     // show title or label
                     $title = $hit['_source']['@id'];
@@ -182,7 +182,6 @@ class ElasticsearchHelper
                 $highlightCount++;
             }
         }
-        
         return $results;
     }
     
@@ -291,21 +290,37 @@ class ElasticsearchHelper
     public function getSearchableIndices()
     {
         $_erfurt = Erfurt_App::getInstance();
-        $ac = $_erfurt->getAc();
 
         // get all accessible models for the current user
         $models = $_erfurt->getStore()->getAvailableModels($withHidden = true);
 
+        // get those models, that shall only be search if currently selected by the user
+        $directAccessModels = static ::$_privateConfig->fulltextsearch->directAccessModels->toArray();
+
         // get all available indices
         $availableIndices = $this->getAvailableIndices();
 
-        // remove not accessible indices from list of available indices
-        $indexnames = array();
-        foreach ($models as $model) {
-            $indexname = str_replace("/", "_", $model['modelIri']);
-            if (in_array($indexname, $availableIndices)){
-                $indexnames[] = $indexname;
+        $selectedModel = OntoWiki::getInstance()->selectedModel->getModelUri();
+
+        // make sure thath we don't have selected a model whose index
+        // should only be searched directly
+        if (!in_array($selectedModel, $directAccessModels)) {
+            // remove not accessible indices from list of available indices
+            $indexnames = array();
+            foreach ($models as $model) {
+                $indexname = $model['modelIri'];
+                $escapedIndexname = str_replace("/", "_", $model['modelIri']);
+
+                // if we the index belongs to a readable model
+                // and is not an index that must be directly accessed
+                if (in_array($escapedIndexname, $availableIndices) && !in_array($indexname, $directAccessModels)) {
+//            if (in_array($escapedIndexname, $availableIndices)){
+                    $indexnames[] = $escapedIndexname;
+                }
             }
+        } else {
+            // if the selected model is a direct access model, return only the corresponding index
+            $indexnames[] = str_replace("/", "_", $selectedModel);
         }
 
         return $indexnames;

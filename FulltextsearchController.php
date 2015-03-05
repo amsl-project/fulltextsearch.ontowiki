@@ -31,6 +31,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $this->_helper->layout->disableLayout();
 
         $translate = $this->_owApp->translate;
+        $searchText = null;
 
         if ($this->_request->query !== null) {
             $searchText = htmlspecialchars(trim($this->_request->query));
@@ -123,8 +124,20 @@ class FulltextsearchController extends OntoWiki_Controller_Component
 
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         $indices = $esHelper->getAvailableIndicesWithMetadata();
-        $this->view->indices = $models;
-        $this->view->models = $models;
+//        $this->view->indices = $models;
+
+
+
+//        $this->view->models = $models;
+    }
+
+    public function availableindicesAction() {
+        // tells the OntoWiki to not apply the template to this action
+        $this->_helper->viewRenderer->setNoRender();
+        $this->_helper->layout->disableLayout();
+
+        $models = $this->getIndexableModels();
+        $this->_response->setBody(json_encode($models));
     }
 
     /**
@@ -169,12 +182,25 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         $metadata = array();
 
-        $classes = $this->_privateConfig->fulltextsearch->classes->toArray();
-        foreach ($classes as $class) {
-            $count = $esHelper->countObjects($indexname, $class);
-            $metadata[$class][] = $count;
 
+        $specificConfigurations = $this->_privateConfig->fulltextsearch->specificconfigurations->toArray();
+
+        if ($key = ElasticsearchUtils::recursiveArraySearch($indexname, $specificConfigurations)){
+            $classes = $specificConfigurations[$key]['classes'];
+        } else {
+            $classes = $this->_privateConfig->fulltextsearch->classes->toArray();
         }
+
+        if (is_array($classes)) {
+            foreach ($classes as $class) {
+                $count = $esHelper->countObjects($indexname, $class);
+                $metadata[$class][] = $count;
+            }
+        } else {
+            $count = $esHelper->countObjects($indexname, $classes);
+            $metadata[$classes][] = $count;
+        }
+
         $this->_response->setBody(json_encode($metadata));
     }
 

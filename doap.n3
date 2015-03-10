@@ -78,6 +78,21 @@
                      "http://www.w3.org/2000/01/rdf-schema#Class";
         ];
 
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "zdb";
+            :uri     "http://amsl.technology/zdb/";
+            :classes "http://purl.org/ontology/bibo/Series",
+                     "http://purl.org/ontology/bibo/Periodical";
+        ];
+
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "templates";
+            :uri     "http://amsl.technology/templates/";
+            :classes "http://vocab.ub.uni-leipzig.de/amslTerms/Template";
+        ];
+
     ];
 
     :defaultOperator "AND";

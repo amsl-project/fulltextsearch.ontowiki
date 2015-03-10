@@ -52,15 +52,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         if ($error) {
 
             $this->view->errorMsg = $errorMsg;
-        } else {
-
-            // set redirect to effective search controller
-            //$url = new OntoWiki_Url(array('controller' => 'list'), array());
-            //$url->setParam('s', $searchText);
-            //$url->setParam('init', '1');
-            //$this->_redirect($url);
-
-
         }
 
         $this->_response->setBody(json_encode($result));

@@ -2,17 +2,6 @@ $(document).ready(function () {
 
     var pathname = window.location.pathname;
 
-    // Whenever an Ajax request is about to be sent, show the loader
-    $(document).ajaxStart(function () {
-        //loader.show();
-        NProgress.start();
-    });
-    // hide loader when all request have finished
-    $(document).ajaxStop(function () {
-        //loader.hide();
-        NProgress.done();
-    });
-
     // make sure we are in the right controller
     if (pathname == "/OntoWiki/fulltextsearch/info") {
 

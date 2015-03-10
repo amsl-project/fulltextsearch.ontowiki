@@ -231,13 +231,24 @@ class FulltextsearchController extends OntoWiki_Controller_Component
             $indexname = null;
         }
 
-        $logger->debug('reindex action: ' . $indexname);
+        // if index specified
+        if ($indexname !== null) {
 
-        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
-        $response = $indexServiceConnector->triggerReindexClass($indexname);
-        $indexServiceConnector->finish();
+            $logger->debug('reindex action: ' . $indexname);
 
-        $this->_response->setBody($response->body);
+            $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+            $response = $indexServiceConnector->triggerReindexClass($indexname);
+            $indexServiceConnector->finish();
+            $this->_response->setBody($response->body);
+        } else {
+          // if no index specified --> full reindex
+            $logger->debug('full reindex');
+
+            $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+            $response = $indexServiceConnector->triggerFullreindex($this->_privateConfig);
+            $indexServiceConnector->finish();
+            $this->_response->setBody($response);
+        }
     }
 
     /**

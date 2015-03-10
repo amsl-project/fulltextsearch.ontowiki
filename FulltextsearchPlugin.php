@@ -38,23 +38,22 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
             $indexServiceConnector->triggerDeleteResource($resource, $model);
         }
 
-//        foreach ($resources as $resource) {
-//            if ($this->canBeDeleted($resource)) {
-//                OntoWiki::getInstance()->logger->info('FulltextsearchPlugin: resource ' . $resource . ' can be deleted');
-//                $indexServiceConnector->triggerDeleteResource($resource, $model);
-//            } else {
-//                OntoWiki::getInstance()->logger->info('FulltextsearchPlugin: resource ' . $resource . ' cannot be deleted');
-//                $indexServiceConnector->triggerReindex($resource);
-//            }
-//        }
         $indexServiceConnector->finish();
     }
 
     public function onFullreindexAction($event)
     {
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
-        $return = $indexServiceConnector->triggerFullreindex();
+        $return = $indexServiceConnector->triggerFullreindex($this->_privateConfig);
         $indexServiceConnector->finish();
+        return $return;
+    }
+
+    public function onReindexAction($event) {
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+        $return = $indexServiceConnector->triggerReindexClass($event->model);
+        $indexServiceConnector->finish();
+        return $return;
     }
 
     /**

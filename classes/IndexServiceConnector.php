@@ -8,6 +8,7 @@
  */
 
 require realpath(dirname(__FILE__)) . '/../libraries/vendor/autoload.php';
+require_once realpath(dirname(__FILE__)) . '/ElasticsearchUtils.php';
 
 class IndexServiceConnector
 {
@@ -166,8 +167,23 @@ class IndexServiceConnector
     }
 
 
-    public function triggerFullreindex()
+    public function triggerFullreindex($config)
     {
+        $helper = new ElasticsearchHelper($config);
+        $indices = $helper->getAvailableIndices();
+        $responseObjects = null;
+
+        foreach ($indices as $index) {
+            // unescape the indexname and trigger reindex
+            $response = $this->triggerReindexClass(str_replace("_", "/", $index));
+            if (!$response->success) {
+                $responseObjects[] = $response->body;
+            }
+        }
+
+        return $responseObjects;
+
+
 //        $this->triggerReindexClass();
     }
 }

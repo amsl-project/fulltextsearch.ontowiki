@@ -9,6 +9,7 @@
 
 require realpath(dirname(__FILE__)) . '/../libraries/vendor/autoload.php';
 require_once realpath(dirname(__FILE__)) . '/ElasticsearchUtils.php';
+require_once realpath(dirname(__FILE__)) . '/ElasticsearchHelper.php';
 
 class IndexServiceConnector
 {

@@ -7,37 +7,13 @@ function prettyPrint($a) {
 }
 ?>
 <h1><?php echo $this->_('Fulltext search results for') ?>: <?php echo $this->input ?></h1>
-<div id="show-filter"><a id="show-filter-btn" class="minibutton"><?php echo $this->_('Show filter') ?></a></div>
-<!-- The list of filters -->
-<div id="filter-list" style="display: none">
-    <h4><?php echo $this->_('Knowledgebase') ?></h4>
-    <?php foreach ($this->availableIndices as $index) :?>
-    <?php if((in_array($index, $this->selectedIndices))): ?>
-    <div>
-        <label class="checkboxradio">
-            <input class="checkbox" type="checkbox"  value="<?php echo $index; ?>" checked><?php echo str_replace("_", "/", $index); ?>
-        </label>
-    </div>
-    <?php else: ?>
-    <div>
-        <label class="checkboxradio">
-            <input class="checkbox" type="checkbox" value="<?php echo $index; ?>"><?php echo str_replace("_", "/", $index); ?>
-        </label>
-    </div>
-    <?php endif; ?>
-    <?php endforeach; ?>
-    <a id="filter-apply-btn" class="minibutton" href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>fulltextsearch/search?input=<?php echo $this->input ?>"><?php echo $this->_('Apply filter') ?></a>
-</div>
-<br />
 <?php $odd = false; ?>
 <?php if (!empty($this->resultArray)) { ?>
-<table class="separated-vertical" id="history-list">
+<table class="display" id="index-list">
     <thead>
         <!-- table headers -->
         <tr class="odd">
-            <!-- <th><?php echo $this->_('select'); ?>          </th> -->
             <th><?php echo $this->_('Resource') ?></th>
-<!--            <th>--><?php //echo $this->_('Label') ?><!--</th>-->
             <th><?php echo $this->_('Highlight') ?></th>
             <th><?php echo $this->_('Knowledgebase') ?></th>
             <th><?php echo $this->_('Class') ?></th>
@@ -51,64 +27,17 @@ function prettyPrint($a) {
             <td><a href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>resource/properties?r=<?php echo $result['id']; ?>"><?php echo $result['id']; ?></a></td>
 <!--            <td>--><?php //if (is_array($result['title'])) {echo $result['title'][0];} else {echo $result['title'];} ?><!--</td>-->
             <td>
-                <span class="hint--bottom" data-hint="<?php echo array_keys($result['highlight'])[0] ?>">
+                <span class="hint--bottom" data-hint="<?php echo $this->titleHelper->getTitle(array_keys($result['highlight'])[0]) ?>">
                 <?php echo array_values(array_values($result['highlight'])[0])[0]; ?>
                 </span>
             </td>
-            <td><?php echo str_replace("_", "/", $result['index']); ?></td>
-            <td><?php echo $result['type']; ?></td>
+            <td><?php echo $this->titleHelper->getTitle(str_replace("_", "/", $result['index'])); ?></td>
+            <td><?php echo $this->titleHelper->getTitle($result['type']); ?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
 <?php } else { echo "<p>No results found</p><br /><br />";};?>
-<div id="pagination">
-<?php
-    $now = $this->from;
-    $next = $now < $this->hits - 10 ? $now + 10 : $now;
-    $previous = $now == 0 ? 0 : $now - 10;
-    $indices = '';
-    if (isset($_GET['indices'])) {
-        $indices = '&indices=' . $_GET['indices'];
-    }
-?>
-
-    <a class="minibutton" href="
-        <?php
-            echo OntoWiki::getInstance()->getUrlBase() 
-                . 'fulltextsearch/search?input=' 
-                . $this->input 
-                . $indices
-                . '&from=' 
-                . '0';
-        ?>
-    "><?php echo $this->_("first") ?></a>
-
-    <a class="minibutton" href="
-        <?php
-            echo OntoWiki::getInstance()->getUrlBase() 
-                . 'fulltextsearch/search?input=' 
-                . $this->input 
-                . $indices
-                . '&from=' 
-                . $previous;
-        ?>
-    "><?php echo $this->_("previous") ?></a>
-
-    <a class="minibutton" href="
-        <?php
-            echo OntoWiki::getInstance()->getUrlBase() 
-                . 'fulltextsearch/search?input=' 
-                . $this->input 
-                . $indices
-                . '&from=' 
-                . $next;
-        ?>
-    "><?php echo $this->_("next") ?></a>
-
-    <?php echo $this->_("Showing results") . ' ' . $this->from . ' - ' . $next . ' ' . $this->_("of") . ' ' . $this->hits ?>
-
-</div>
 <div id="show-json-result">[+] <?php echo $this->_('Show results as JSON') ?></div>
 <div id="json-result" style="display: none">
     <?php echo prettyPrint($this->jsonResult) ?>

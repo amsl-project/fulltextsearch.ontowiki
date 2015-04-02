@@ -117,10 +117,9 @@ class ElasticsearchHelper
         
         $logger = OntoWiki::getInstance()->getCustomLogger('fulltextsearch');
         
-        $index = static ::$_privateConfig->fulltextsearch->index;
         $defaultOperator = static ::$_privateConfig->fulltextsearch->defaultOperator;
         $fields = static ::$_privateConfig->fulltextsearch->fields->toArray();
-        $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
+        $titleHelper = new OntoWiki_Model_TitleHelper();
         
         $logger->debug('fulltextsearch: searching for ' . $searchTerm);
 
@@ -133,7 +132,6 @@ class ElasticsearchHelper
             }
             $searchableIndices = $this->getSearchableIndices();
             $query['index'] = $searchableIndices;
-//            $query['index'] = array("http:__ubl.amsl.technology_erm_", "http:__amsl.technology_consortial_");
 
             $query['body']['query']['query_string']['query'] = $partialQuery;
             $query['body']['query']['query_string']['fields'] = $fields;
@@ -152,10 +150,13 @@ class ElasticsearchHelper
 
             $logger->info('fullresult:' . print_r(($fullResults), true));
             $highlightCount = 0;
+            $total = $fullResults['hits']['total'];
             foreach ($fullResults['hits']['hits'] as $hit) {
                 if($hit['_type'] == 'indexsettings') {
                     continue;
                 }
+
+                $type = $titleHelper->getTitle($hit['_type']);
                 if (isset($hit['highlight'])) {
                     $highlight = $hit['highlight'];
                     $highlightValues[] = array_values($highlight);
@@ -172,9 +173,16 @@ class ElasticsearchHelper
                         $title = $hit['_source']['http://www.w3.org/2000/01/rdf-schema#label'];
                     }
                     
-                    //$title = $title . ' (' . $originIndex . ')';
-                    
-                    $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => $highlightValue, 'highlightKey' => $highlightKey, 'originIndex' => $originIndex);
+                    $indexName = $titleHelper->getTitle($originIndex);
+                    $highlightKey = $titleHelper->getTitle($highlightKey[0]);
+
+                    $results[] = array('uri' => $hit['_source']['@id'],
+                        'title' => $title,
+                        'highlight' => $highlightValue,
+                        'highlightKey' => $highlightKey,
+                        'originIndex' => $indexName,
+                        'type' => $type,
+                        'total' => $total);
                 } else {
                     $title = $hit['_source']['@id'];
                     $results[] = array('uri' => $hit['_source']['@id'], 'title' => $title, 'highlight' => '');
@@ -197,8 +205,8 @@ class ElasticsearchHelper
         
         $defaultOperator = static ::$_privateConfig->fulltextsearch->defaultOperator;
         $fields = static ::$_privateConfig->fulltextsearch->fields->toArray();
-        $dropdownField = static ::$_privateConfig->fulltextsearch->dropdownField;
         $size = static ::$_privateConfig->fulltextsearch->size;
+        $titleHelper = new OntoWiki_Model_TitleHelper();
         
         // if no index was specified ignore the parameter "index" to search all indices
         if ($indices !== '') {
@@ -215,6 +223,8 @@ class ElasticsearchHelper
             foreach ($searchTerms as $term) {
                 $partialQuery.= $term . "* ";
             }
+
+            $size = 10000;
             $query['body']['size'] = $size;
             $query['body']['from'] = $from;
             $query['body']['query']['query_string']['query'] = $partialQuery;

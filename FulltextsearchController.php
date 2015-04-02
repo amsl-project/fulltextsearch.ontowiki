@@ -94,6 +94,7 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $this->view->from = $from;
         $this->view->input = $input;
         $this->view->hits = $result['resultSet']['hits']['total'];
+        $this->view->titleHelper = new OntoWiki_Model_TitleHelper();
 
         OntoWiki::getInstance()->getNavigation()->disableNavigation();
     }

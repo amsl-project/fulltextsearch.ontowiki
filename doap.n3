@@ -11,7 +11,7 @@
 :fulltextsearch a doap:Project ;
   doap:name "fulltextsearch" ;
   owconfig:privateNamespace <https://github.com/AKSW/history/raw/master/doap.n3#> ;
-  owconfig:enabled "true"^^xsd:boolean ;
+  owconfig:enabled "false"^^xsd:boolean ;
   owconfig:templates "templates" ;
   owconfig:languages "languages" ;
   rdfs:label "Fulltextsearch" ;
@@ -37,7 +37,7 @@
                    "http://localhost/OntoWiki/Config/",
                    "http://ns.ontowiki.net/SysOnt/",
                    "http://xmlns.com/foaf/0.1/";
-                   
+
     :directAccessModels "http://vocab.ub.uni-leipzig.de/amsl/",
                         "http://amsl.technology/templates/";
 

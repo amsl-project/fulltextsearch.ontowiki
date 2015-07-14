@@ -1,3 +1,11 @@
+/**
+ * This file is part of the {@link http://amsl.technology amsl} project.
+ *
+ * @author Sebastian Nuck
+ * @copyright Copyright (c) 2015, {@link http://ub.uni-leipzig.de Leipzig University Library}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
 $(document).ready(function () {
 
     var pathname = window.location.pathname;
@@ -17,12 +25,14 @@ $(document).ready(function () {
             hiddenStyle: {opacity: 0}
         });
 
+        /**
+         * Now we need to query all available indices. For each index a container is built.
+         */
         $.ajax({
             url: urlBase + 'fulltextsearch/availableindices',
             dataType: 'json',
             success: function (models) {
                 console.log(models);
-
 
                 $.each(models, function (indexname, value) {
                     var countDiv;
@@ -40,7 +50,6 @@ $(document).ready(function () {
                             + '<a id="refresh">refresh view</a>, <a id="reindex">reindex</a> or <a id="delete">delete</a>'
                             + '</div></div>');
 
-                            //countDiv.html(buildString(count));
                             NProgress.inc((1 / Object.keys(models).length) * 0.75); // inc progressbar
                             $indices.append(indexBox).masonry('appended', indexBox);
 

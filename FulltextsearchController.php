@@ -1,9 +1,10 @@
 <?php
 
 /**
- * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ * This file is part of the {@link http://amsl.technology amsl} project.
  *
- * @copyright Copyright (c) 2013, {@link http://aksw.org AKSW}
+ * @author Sebastian Nuck
+ * @copyright Copyright (c) 2015, {@link http://ub.uni-leipzig.de Leipzig University Library}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
 
@@ -83,7 +84,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $result = $esHelper->searchAndReturnEverything($input, $indices, $from);
         $this->view->jsonResult = $result['resultSet'];
 
-//        $this->view->availableIndices = $esHelper->getAvailableIndices();
         $this->view->availableIndices = $esHelper->getSearchableIndices();
 
         // transform comma separated indices to array
@@ -116,11 +116,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
 
         $esHelper = new ElasticsearchHelper($this->_privateConfig);
         $indices = $esHelper->getAvailableIndicesWithMetadata();
-//        $this->view->indices = $models;
-
-
-
-//        $this->view->models = $models;
     }
 
     public function availableindicesAction() {
@@ -152,7 +147,6 @@ class FulltextsearchController extends OntoWiki_Controller_Component
         $response = $indexServiceConnector->triggerCreateIndex($indexname);
         $indexServiceConnector->finish();
         $_owApp->logger->debug('Fulltextsearch createindexAction response:' . $response);
-        // $this->_response->setHeader('Content-Type', 'text/html');
         $this->_response->setBody(json_encode($response));
     }
 

@@ -1,11 +1,13 @@
 <?php
 
 /**
- * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ * This file is part of the {@link http://amsl.technology amsl} project.
  *
- * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
- * @license   http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @author Sebastian Nuck
+ * @copyright Copyright (c) 2015, {@link http://ub.uni-leipzig.de Leipzig University Library}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
+
 require_once 'OntoWiki/Plugin.php';
 require_once realpath(dirname(__FILE__)) . '/classes/IndexServiceConnector.php';
 

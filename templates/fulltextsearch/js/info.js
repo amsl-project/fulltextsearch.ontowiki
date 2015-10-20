@@ -11,7 +11,7 @@ $(document).ready(function () {
     var pathname = window.location.pathname;
 
     // make sure we are in the right controller
-    if (pathname == "/OntoWiki/fulltextsearch/info") {
+    if (pathname.indexOf("/fulltextsearch/info") > -1) {
 
         var $indices = $('#indices');
 

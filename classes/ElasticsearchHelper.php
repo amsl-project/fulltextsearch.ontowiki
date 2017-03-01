@@ -319,7 +319,7 @@ class ElasticsearchHelper
             $indexnames = array();
             foreach ($models as $model) {
                 $indexname = $model['modelIri'];
-                $escapedIndexname = str_replace("/", "_", $model['modelIri']);
+                $escapedIndexname = strtolower(str_replace("/", "_", $model['modelIri']));
 
                 // if we the index belongs to a readable model
                 // and is not an index that must be directly accessed

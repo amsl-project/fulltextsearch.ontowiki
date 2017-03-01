@@ -11,7 +11,7 @@
 :fulltextsearch a doap:Project ;
   doap:name "fulltextsearch" ;
   owconfig:privateNamespace <https://github.com/AKSW/history/raw/master/doap.n3#> ;
-  owconfig:enabled "true"^^xsd:boolean ;
+  owconfig:enabled "false"^^xsd:boolean ;
   owconfig:templates "templates" ;
   owconfig:languages "languages" ;
   rdfs:label "Fulltextsearch" ;
@@ -30,22 +30,36 @@
     :password "my_password";
     :index "bibo:periodical";
     :fields "http://www.w3.org/2000/01/rdf-schema#label",
-            "http://vocab.ub.uni-leipzig.de/bibrm/shortBudget",
-            "http://www.w3.org/2006/vcard/ns#family-name",
-            "http://vocab.ub.uni-leipzig.de/bibrm/eralttitle",
-            "http://purl.org/lobid/lv#isil",
-            "http://xmlns.com/foaf/0.1/name",
-            "http://vocab.ub.uni-leipzig.de/bibrm/licenseType",
-            "http://purl.org/dc/elements/1.1/publisher",
-            "http://purl.org/dc/elements/1.1/title",
-            "http://purl.org/dc/terms/alternative",
-            "http://www.w3.org/2006/vcard/ns#hasOrganizationName",
-            "http://vocab.ub.uni-leipzig.de/bibrm/shortFaculty";
+            "http://xmlns.com/foaf/0.1/name";
+    :classes "http://xmlns.com/foaf/0.1/Organization",
+             "http://xmlns.com/foaf/0.1";
+    :ignoredModels "http://www.openlinksw.com/schemas/virtrdf#",
+                   "http://localhost/OntoWiki/Config/",
+                   "http://ns.ontowiki.net/SysOnt/",
+                   "http://xmlns.com/foaf/0.1/";
+
+    :directAccessModels "http://vocab.ub.uni-leipzig.de/amsl/",
+                        "http://amsl.technology/templates/";
+
+    owconfig:config [
+        a owconfig:Config;
+        owconfig:id "specificconfigurations";
+
+        owconfig:config [
+            a owconfig:Config;
+            owconfig:id "templates";
+            :uri     "http://amsl.technology/templates/";
+            :classes "http://vocab.ub.uni-leipzig.de/amslTerms/Template";
+        ];
+
+    ];
+
     :defaultOperator "AND";
     :dropdownField "http://purl.org/dc/elements/1.1/title";
     :size "10";
     :indexService "172.18.113.206:8080";
     :indexServicePath "/erm/index/";
+
 ] ;
   doap:release :v1-0 .
 :v1-0 a doap:Version ;

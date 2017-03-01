@@ -1,25 +1,141 @@
+/**
+ * This file is part of the {@link http://amsl.technology amsl} project.
+ *
+ * @author Sebastian Nuck
+ * @copyright Copyright (c) 2015, {@link http://ub.uni-leipzig.de Leipzig University Library}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ */
+
 $(document).ready(function () {
-    $('form[name=create-index]').submit(function (e) {
-        e.preventDefault();
-        $("#create-index-response").text('creating index ...');
+
+    var pathname = window.location.pathname;
+
+    // make sure we are in the right controller
+    if (pathname.indexOf("/fulltextsearch/info") > -1) {
+
+        var $indices = $('#indices');
+
+        // initialize grid layout with masonry
+        $indices.masonry({
+            columnWidth: 400,
+            itemSelector: '.indexBox',
+            transitionDuration: '0.2s',
+            "gutter": 10,
+            visibleStyle: {opacity: 1},
+            hiddenStyle: {opacity: 0}
+        });
+
+        /**
+         * Now we need to query all available indices. For each index a container is built.
+         */
         $.ajax({
-            type: 'POST',
-            cache: false,
-            url: urlBase + 'fulltextsearch/createindex',
-            data: $(this).serialize(),
-            success: function (msg) {
-                $("#create-index-response").text('OK ✔');
-                location.reload();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $("#create-index-response").text(textStatus);
-            },
-            complete: function (jqXHR, textStatus) {
+            url: urlBase + 'fulltextsearch/availableindices',
+            dataType: 'json',
+            success: function (models) {
+                console.log(models);
+
+                $.each(models, function (indexname, value) {
+                    var countDiv;
+                    $.ajax({
+                        url: urlBase + 'fulltextsearch/countobjects',
+                        data: {indexname: indexname},
+                        dataType: 'json',
+                        success: function (count) {
+
+                            var indexBox = $('<div class="indexBox"><div class="indexname">'
+                            + indexname
+                            + '</div><div class="count">'
+                            + buildString(count)
+                            + '</div><div class="indexfooter">'
+                            + '<a id="refresh">refresh view</a>, <a id="reindex">reindex</a> or <a id="delete">delete</a>'
+                            + '</div></div>');
+
+                            NProgress.inc((1 / Object.keys(models).length) * 0.75); // inc progressbar
+                            $indices.append(indexBox).masonry('appended', indexBox);
+
+                            countDiv = indexBox.find(".count");
+
+                            indexBox.find("#reindex").click(function () {
+                                reindex(indexname, countDiv);
+                            });
+
+                            indexBox.find("#delete").click(function () {
+                                deleteIndex(indexname, countDiv);
+                            });
+
+                            indexBox.find("#refresh").click(function () {
+                                refreshView(indexname, countDiv);
+                            });
+                        }
+                    });
+                });
             }
         });
-    });
+    }
 });
 
-function strStartsWith(str, prefix) {
-    return str.indexOf(prefix) === 0;
+
+
+function reindex(indexname, indexbox) {
+    $.ajax({
+        url: urlBase + 'fulltextsearch/reindex',
+        data: {indexname: indexname}
+    });
+    refreshView(indexname, indexbox);
 }
+
+function refreshView(indexname, indexBox) {
+
+    $.ajax({
+        url: urlBase + 'fulltextsearch/countobjects',
+        data: {indexname: indexname},
+        dataType: 'json',
+        beforeSend: function () {
+            indexBox.css('color', 'lightgray');
+        },
+        success: function (count) {
+            indexBox.html(buildString(count));
+            indexBox.css('color', 'black');
+        }
+    });
+}
+
+// transforms the result json to a html div container
+function buildString(result) {
+    var newHTML = [];
+    $.each(result, function (classname, countValue) {
+        newHTML.push('<div class="class-count-container">');
+        newHTML.push('<div class="class-count-container-headline">');
+        newHTML.push(classname);
+        newHTML.push('</div><div class="class-count-container-content">count: <strong>');
+        newHTML.push(countValue);
+        newHTML.push('</strong></div></div>')
+    });
+    return newHTML.join("");
+}
+
+function deleteIndex(indexname, indexbox) {
+    $("#dialog-confirm").dialog({
+        resizable: false,
+        modal: true,
+        buttons: {
+            "Delete": function () {
+                $(this).dialog("close");
+                $.ajax({
+                    url: urlBase + 'fulltextsearch/deleteIndex',
+                    data: {indexname: indexname},
+                    success: function (result) {
+                        refreshView(indexname, indexbox);
+                    }
+                });
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+}
+
+
+

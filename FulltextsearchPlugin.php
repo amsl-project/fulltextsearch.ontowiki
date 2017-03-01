@@ -1,29 +1,34 @@
 <?php
 
 /**
- * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ * This file is part of the {@link http://amsl.technology amsl} project.
  *
- * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
- * @license   http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @author Sebastian Nuck
+ * @copyright Copyright (c) 2015, {@link http://ub.uni-leipzig.de Leipzig University Library}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
+
 require_once 'OntoWiki/Plugin.php';
 require_once realpath(dirname(__FILE__)) . '/classes/IndexServiceConnector.php';
+
 class FulltextsearchPlugin extends OntoWiki_Plugin
 {
-    
-    public function onIndexAction($event) {
+
+    public function onIndexAction($event)
+    {
         $_owApp = OntoWiki::getInstance();
-        $logger = $_owApp->logger;
+        $logger = $_owApp->getCustomLogger('fulltextsearch');
         $resource = $event->resource;
         $model = $event->model;
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $class = $this->findClass($event->resource);
-        $return = $indexServiceConnector->triggerReindex($event->resource, $class);
+        $return = $indexServiceConnector->triggerReindex($resource, $model, $class);
         $indexServiceConnector->finish();
         $logger->debug('onIndexAction: ' . print_r($return, true));
     }
-    
-    public function onDeleteResourceAction($event) {
+
+    public function onDeleteResourceAction($event)
+    {
         $model = $event->model;
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
         $resources = $event->resources;
@@ -31,29 +36,35 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
             $resources = array($resources);
         }
         foreach ($resources as $resource) {
-            if ($this->canBeDeleted($resource)) {
-                OntoWiki::getInstance()->logger->info('FulltextsearchPlugin: resource ' . $resource . ' can be deleted');
-                $indexServiceConnector->triggerDeleteResource($resource);
-            } else {
-                OntoWiki::getInstance()->logger->info('FulltextsearchPlugin: resource ' . $resource . ' cannot be deleted');
-                $indexServiceConnector->triggerReindex($resource);
-            }
+            OntoWiki::getInstance()->logger->info('FulltextsearchPlugin: resource ' . $resource . ' can be deleted');
+            $indexServiceConnector->triggerDeleteResource($resource, $model);
         }
+
         $indexServiceConnector->finish();
     }
-    
-    public function onFullreindexAction($event) {
+
+    public function onFullreindexAction($event)
+    {
         $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
-        $return = $indexServiceConnector->triggerFullreindex();
+        $return = $indexServiceConnector->triggerFullreindex($this->_privateConfig);
         $indexServiceConnector->finish();
+        return $return;
     }
-    
+
+    public function onReindexAction($event) {
+        $indexServiceConnector = new IndexServiceConnector($this->_privateConfig);
+        $return = $indexServiceConnector->triggerReindexClass($event->model);
+        $indexServiceConnector->finish();
+        return $return;
+    }
+
     /**
      * Checks whether the resource still exists in another knowledge base.
      * @param  $resource
      * @return type of $resource
      */
-    private function canBeDeleted($resource) {
+    private function canBeDeleted($resource)
+    {
         $_owApp = OntoWiki::getInstance();
         $store = $_owApp->erfurt->getStore();
         $selectedModel = $_owApp->selectedModel;
@@ -65,11 +76,12 @@ class FulltextsearchPlugin extends OntoWiki_Plugin
             return false;
         }
     }
-    
+
     /**
      * Find a class to a given resource uri.
      */
-    public function findClass($resource) {
+    public function findClass($resource)
+    {
         $_owApp = OntoWiki::getInstance();
         $store = $_owApp->erfurt->getStore();
         $selectedModel = $_owApp->selectedModel;

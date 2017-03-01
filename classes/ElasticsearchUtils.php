@@ -26,10 +26,30 @@ class ElasticsearchUtils
 
             $extract['highlight'] = $hit['highlight'];
             $extract['index'] = $hit['_index'];
+            $extract['type'] = $hit['_type'];
             array_push($extractedResults, $extract);
         }
 
         OntoWiki::getInstance()->logger->info('esutils: ' . print_r($extractedResults, true));
         return $extractedResults;
+    }
+
+    /**
+     * Extends array_search functions and returns the key of the haystack
+     * where the needle was found
+     * @param $needle
+     * @param $haystack
+     * @return string $key
+     */
+    public static function recursiveArraySearch($needle, $haystack)
+    {
+        foreach($haystack as $key=>$value) {
+            $current_key=$key;
+            if($needle===$value ||
+                (is_array($value) && self::recursiveArraySearch($needle,$value) !== false)) {
+                return $current_key;
+            }
+        }
+        return false;
     }
 }

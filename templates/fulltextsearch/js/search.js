@@ -1,9 +1,12 @@
 /**
- * This file is part of the {@link http://ontowiki.net OntoWiki} project.
+ * This file is part of the {@link http://amsl.technology amsl} project.
  *
- * @copyright Copyright (c) 2013, {@link http://aksw.org AKSW}
+ * @author Sebastian Nuck
+ * @copyright Copyright (c) 2015, {@link http://ub.uni-leipzig.de Leipzig University Library}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
  */
+
+
 /**
  * This function evaluates the regex for the typeahead plugin.
  * @param  {[String]} strs The pool of strings
@@ -53,33 +56,35 @@ titles.initialize();
  * the new class typeahead is added.
  */
 $(document).ready(function() {
-    $('#searchtext-input').off().unbind().addClass('typeahead');
-    // dynamically set input value to value of search text. 
+    var input = $('#searchtext-input');
+    input.off().unbind().addClass('typeahead');
+    // dynamically set input value to value of search text.
     // This is needed to search for input if enter was pressed.
-    $("#searchtext-input").on("input", function() {
+    input.on("input", function() {
         input = $('#searchtext-input').val();
         $("#actual-input").text(input);
     });
     // every result gets a paragraph containing the title and a visualization of the
     // the part elasticsearch has matched (highlight)
     var source = '<p>';
-    source += '<strong class="highlight-title">{{title}}</strong><br><span class="origin-index">{{{originIndex}}}</span><br>';
+    source += '<strong class="highlight-title">{{title}}</strong><span class="origin-type tag">{{{type}}}</span><br/>';
+    source += '<span class="origin-index">' + _translate('from') + ' {{{originIndex}}}</span><br>';
     source += '<span class="hint--bottom" data-hint="{{highlightKey}}">';
     source += '<span class="uri-suggestion">{{{highlight}}}</span>';
     source += '</span>';
     source += '</p>';
-    var noResults = 'No results found';
-    var trigger = 'Press enter to trigger an advanced search';
+    var noResults = _translate('no results');
+    //var trigger = _translate('press enter');
     // indices
-    var indices = 'bibo:periodical,bibrm:contractitem';
+    //var indices = 'bibo:periodical,bibrm:contractitem';
     $('#searchtext-input.typeahead').typeahead(null, {
         name: 'best-matches',
         displayKey: 'title',
         source: titles.ttAdapter(),
         templates: {
-            empty: ['<div class="empty-message">', '<strong>' + noResults + '</strong><p>' + trigger + '</p?>', '</div>'].join('\n'),
+            empty: ['<div class="empty-message">', '<strong>' + noResults + '</strong></div>'].join('\n'),
             suggestion: Handlebars.compile(source),
-            footer: '<div class="empty-message">Maximal 7 results are shown. Press Enter to see all.</div>'
+            footer: '<div class="enter-message">'+ _translate('press enter') + '</div>'
         }
     }).on('typeahead:selected typeahead:autocompleted', function(event, datum) {
         // if a autocomplete-generated result is selected the user will be directed there directly
@@ -91,16 +96,20 @@ $(document).ready(function() {
             var keycode = (event.keyCode ? event.keyCode : event.which);
             if (keycode == '13') {
                 window.location = urlBase + 'fulltextsearch/search?input=' + input + '&from=0';
-            };
+            }
         });
     });
     // hide inner labels on click
     $('input.inner-label').innerLabel().blur();
+
 });
 /**
  * Show the result as json.
  */
 $(document).ready(function() {
+
+    $('#index-list').DataTable();
+
     $("#show-json-result").click(function() {
         $("#json-result").slideToggle("slow", function() {
             $("#json-result").is(":visible") ? $('#show-json-result').text('[\u2212] ' + hideResults) : $('#show-json-result').text('[+] ' + showAsJson);

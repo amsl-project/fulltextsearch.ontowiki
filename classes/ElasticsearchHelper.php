@@ -91,6 +91,7 @@ class ElasticsearchHelper
      *
      */
     public function countObjects($indexname, $classname) {
+        $indexname = strtolower($indexname);
         if (isset($indexname) && isset($classname) && $this->indexExists(str_replace("/", "_", $indexname))){
             $query['index'] = str_replace("/", "_", $indexname);
             $query['body']['query']['filtered']['filter']['type']['value'] = str_replace("#", "//", $classname);
@@ -330,7 +331,7 @@ class ElasticsearchHelper
             }
         } else {
             // if the selected model is a direct access model, return only the corresponding index
-            $indexnames[] = str_replace("/", "_", $selectedModel);
+            $indexnames[] = strtolower(str_replace("/", "_", $selectedModel));
         }
 
         return $indexnames;

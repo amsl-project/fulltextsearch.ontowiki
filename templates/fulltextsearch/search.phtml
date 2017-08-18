@@ -24,7 +24,7 @@ function prettyPrint($a) {
         <?php $i = 0; ?>
         <?php foreach ($this->resultArray as $result) :?>
         <tr class="<?php echo $odd ? 'odd' : 'even'; $odd = !$odd; ?> ">
-            <td><a href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>resource/properties?r=<?php echo $result['id']; ?>"><?php echo $result['id']; ?></a></td>
+            <td><a href="<?php echo OntoWiki::getInstance()->getUrlBase() ?>resource/properties?r=<?php echo urlencode($result['id']); ?>"><?php echo $result['id']; ?></a></td>
             <td>
                 <span class="hint--bottom" data-hint="<?php echo $this->titleHelper->getTitle(array_keys($result['highlight'])[0]) ?>">
                 <?php echo array_values(array_values($result['highlight'])[0])[0]; ?>
